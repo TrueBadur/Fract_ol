@@ -47,6 +47,13 @@ typedef struct		s_vector3_f
 	float		z;
 }					t_float3;
 
+typedef struct
+{
+	double		x;
+	double		y;
+	double		z;
+}					t_double3;
+
 typedef struct		s_vector4
 {
 	int	x;
