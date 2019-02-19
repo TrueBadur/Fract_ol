@@ -70,14 +70,15 @@ static void ft_build_err_handle(cl_program pr, cl_device_id dev)
     exit(1);
 }
 
-cl_program ft_build_program(cl_context ctx, cl_device_id dev, const char* filename) {
+cl_program ft_build_program(cl_context ctx, cl_device_id dev, const char* fname)
+{
 
     cl_program  pr;
     size_t      pr_s;
     char        *pr_buf;
     int         err;
 
-    pr_s = ft_get_program(&pr_buf, filename);
+    pr_s = ft_get_program(&pr_buf, fname);
     pr = clCreateProgramWithSource(ctx, 1,(const char**)&pr_buf, &pr_s, &err);
     if(err < 0)
     {
@@ -89,4 +90,21 @@ cl_program ft_build_program(cl_context ctx, cl_device_id dev, const char* filena
     if(err < 0)
     	ft_build_err_handle(pr, dev);
     return pr;
+}
+
+void ft_ocl_err_handler(cl_int err, const char *message)
+{
+    printf("%s\n", message);
+    exit(err);
+}
+
+void ft_ocl_dev_cont_prog(t_ocl *ocl, char *pr_name)
+{
+    cl_int err;
+
+    ocl->device = ft_create_device();
+    ocl->context = clCreateContext(NULL, 1, &ocl->device, NULL, NULL, &err);
+    if (err < 0)
+        ft_ocl_err_handler(err, FT_OCL_CONTEXT_ERR);
+    ocl->program = ft_build_program(ocl->context, ocl->device, pr_name);
 }
