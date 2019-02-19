@@ -17,7 +17,7 @@
 # include <mlx.h>
 # include <math.h>
 # include <fcntl.h>
-# define  MOUSE_SCROL_SCALE 2.0
+# define  MOUSE_SCROL_SCALE 1.2
 #define PROGRAM_FILE "mndlbrt.cl"
 #define KERNEL_FUNC "mndlbrt"
 #define KERN_NUMBER 1
@@ -65,29 +65,7 @@ typedef union	u_color
 	char	argb[4];
 }				t_color;
 
-void			ft_mlx_img_putpixel(t_img *img, unsigned int x, unsigned int y,
-		t_color col);
-int				ft_error(int er);
-void			img_drawpxl(char *img_data, void *mlx_ptr, t_int4 dot,
-		int line_size);
-void			img_drawpxlsafe(char *img_data, t_mlx mlx, t_int4 dot,
-		int line_size);
-void			img_drawline(t_int4 dot0, t_int4 dot1, t_mlx mlx, t_img cimg);
-void			img_drawlinesafe(t_int4 dot0, t_int4 dot1, t_mlx mlx,
-		t_img cimg);
-int				border_check(t_int4 dot0, t_int4 dot1, t_int2 map);
-void			ft_transform_point(t_int4 *v, void *data);
-void			print_map(t_int4 *v, void *data);
-void			ft_point_move(t_int4 *vec4, void *data);
-t_mtrx			*x_rot_mtrx(int x);
-t_mtrx			*y_rot_mtrx(int y);
-t_mtrx			*z_rot_mtrx(int z);
-t_mtrx			*ft_scale_mtrx(t_float3 v);
-t_mtrx			*ft_rotate_mtrx(t_int3 v);
-t_mtrx			*ft_move_mtrx(t_int3 v);
-t_mtrx			*ft_persp_mtrx(int z);
-void			mlx_free(t_mlx **mlx);
-int				img_to_win(void *param);
+void 		ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double3 start);
 int				hook_keydwn(int key, void *param);
 int				mouse_hook(int but, int x, int y, void *param);
 #endif
