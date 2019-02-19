@@ -12,12 +12,20 @@
 # **************************************************************************** #
 
 NAME = libft.a
-SRC = $(wildcard ft*.c) get_next_line.c 
+OCL_NAME = libocl.a
+SRC = $(wildcard ft*.c) get_next_line.c
 OBJ=$(SRC:.c=.o)
-CC = gcc
+OCL_SRC = ocl.c
+OCL_OBJ = ocl.o
+CC = clang
 CFLAGS = -Wall -Wextra -Werror
 
 all: $(SRC) $(NAME)
+
+$(OCL_NAME): $(OCL_OBJ)
+    @ar r $(OCL_NAME) $(OCL_OBJ)
+
+ocl: $(OCL_SRC) $(OCL_NAME)
 
 $(NAME): $(OBJ)
 	@ar r $(NAME) $(OBJ)
