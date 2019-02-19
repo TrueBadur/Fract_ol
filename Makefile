@@ -16,6 +16,7 @@ OBJ=$(SRC:.c=.o)
 CC = clang
 CFLAGS = -Wall -Wextra -Werror
 LIB = libft/libft.a
+LIBOCL = libft/libocl.a
 LIBDIR = libft/
 LIBSPATH = -I libft/ -I /usr/local/include/
 HDR = fractol.h
@@ -25,7 +26,7 @@ OCL = -framework OpenCL
 all: lib $(OBJ) $(NAME)
 
 $(NAME): $(LIB) $(OBJ)
-	$(CC) $(CFLAGS) $(LIBSPATH) -o $(NAME) $(LINK) $(LIB) $(OCL) $(OBJ)
+	$(CC) $(CFLAGS) $(LIBSPATH) -o $(NAME) $(LINK) $(LIB) $(OCL) $(OBJ) $(LIBOCL)
 
 lib:  
 	make -C $(LIBDIR)
