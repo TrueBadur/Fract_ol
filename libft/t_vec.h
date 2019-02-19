@@ -18,21 +18,34 @@ typedef struct		s_vector2
 {
 	int		x;
 	int		y;
-}					t_vec2;
+}					t_int2;
+
+typedef struct
+{
+	unsigned	x;
+	unsigned	y;
+}					t_uint2;
 
 typedef struct		s_vector3
 {
 	int		x;
 	int		y;
 	int		z;
-}					t_vec3;
+}					t_int3;
+
+typedef struct
+{
+	unsigned	x;
+	unsigned	y;
+	unsigned	z;
+}					t_uint3;
 
 typedef struct		s_vector3_f
 {
 	float		x;
 	float		y;
 	float		z;
-}					t_vec3_f;
+}					t_float3;
 
 typedef struct		s_vector4
 {
@@ -40,7 +53,7 @@ typedef struct		s_vector4
 	int	y;
 	int	z;
 	int	color;
-}					t_vec4;
+}					t_int4;
 
 typedef struct		s_vector4_f
 {
@@ -48,7 +61,8 @@ typedef struct		s_vector4_f
 	float		y;
 	float		u;
 	float		v;
-}					t_vec4_f;
+}					t_float4;
+
 
 typedef struct		s_vector
 {

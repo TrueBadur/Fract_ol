@@ -13,10 +13,15 @@
 #ifndef FDF_H
 # define FDF_H
 # include "libft/libft.h"
+# include "libft/ocl.h"
 # include <mlx.h>
 # include <math.h>
 # include <fcntl.h>
-# define  MOUSE_SCROL_SCALE 2.0;
+# define  MOUSE_SCROL_SCALE 2.0
+#define PROGRAM_FILE "mndlbrt.cl"
+#define KERNEL_FUNC "mndlbrt"
+#define KERN_NUMBER 1
+#define RES 1024
 # define MW_NAME "FDF by bparker and ehugh-be"
 # define CONT_ERR 5
 # define CONT_ERR_MSG "error: wrong data in file\n"
@@ -40,7 +45,7 @@ typedef struct	s_mlx
 	void		*win_ptr[10];
 	size_t		wc;
 	size_t		cw;
-	t_vec2		res[10];
+	t_int2		res[10];
 }				t_mlx;
 
 typedef struct	s_img
@@ -50,7 +55,8 @@ typedef struct	s_img
 	int			bpp;
 	int			size_line;
 	int			endian;
-	t_vec2		res;
+	t_uint2		res;
+	cl_mem 		buf;
 }				t_img;
 
 typedef union	u_color
@@ -62,23 +68,23 @@ typedef union	u_color
 void			ft_mlx_img_putpixel(t_img *img, unsigned int x, unsigned int y,
 		t_color col);
 int				ft_error(int er);
-void			img_drawpxl(char *img_data, void *mlx_ptr, t_vec4 dot,
+void			img_drawpxl(char *img_data, void *mlx_ptr, t_int4 dot,
 		int line_size);
-void			img_drawpxlsafe(char *img_data, t_mlx mlx, t_vec4 dot,
+void			img_drawpxlsafe(char *img_data, t_mlx mlx, t_int4 dot,
 		int line_size);
-void			img_drawline(t_vec4 dot0, t_vec4 dot1, t_mlx mlx, t_img cimg);
-void			img_drawlinesafe(t_vec4 dot0, t_vec4 dot1, t_mlx mlx,
+void			img_drawline(t_int4 dot0, t_int4 dot1, t_mlx mlx, t_img cimg);
+void			img_drawlinesafe(t_int4 dot0, t_int4 dot1, t_mlx mlx,
 		t_img cimg);
-int				border_check(t_vec4 dot0, t_vec4 dot1, t_vec2 map);
-void			ft_transform_point(t_vec4 *v, void *data);
-void			print_map(t_vec4 *v, void *data);
-void			ft_point_move(t_vec4 *vec4, void *data);
+int				border_check(t_int4 dot0, t_int4 dot1, t_int2 map);
+void			ft_transform_point(t_int4 *v, void *data);
+void			print_map(t_int4 *v, void *data);
+void			ft_point_move(t_int4 *vec4, void *data);
 t_mtrx			*x_rot_mtrx(int x);
 t_mtrx			*y_rot_mtrx(int y);
 t_mtrx			*z_rot_mtrx(int z);
-t_mtrx			*ft_scale_mtrx(t_vec3_f v);
-t_mtrx			*ft_rotate_mtrx(t_vec3 v);
-t_mtrx			*ft_move_mtrx(t_vec3 v);
+t_mtrx			*ft_scale_mtrx(t_float3 v);
+t_mtrx			*ft_rotate_mtrx(t_int3 v);
+t_mtrx			*ft_move_mtrx(t_int3 v);
 t_mtrx			*ft_persp_mtrx(int z);
 void			mlx_free(t_mlx **mlx);
 int				img_to_win(void *param);
