@@ -47,7 +47,7 @@ static void init_mlx(t_mlx *mlx)
 	mlx->wc = 0;
 	mlx->cw = 0;
 }
-void ft_ocl_set(t_ocl *ocl, size_t iter, t_img *img, t_float3 start)
+/*void ft_ocl_set(t_ocl *ocl, size_t iter, t_img *img, t_float3 start)
 {
 	cl_mem output_buf;
 	cl_int err;
@@ -76,7 +76,50 @@ void ft_ocl_set(t_ocl *ocl, size_t iter, t_img *img, t_float3 start)
 	err = clEnqueueReadBuffer(ocl->queue,output_buf, CL_TRUE, 0, sizeof(int) * gs, img->data, 0, NULL, NULL);
 	if (err < 0)
 		ft_ocl_err_handler(err, FT_OCL_READ_BUF_ERR);
+}*/
+
+void ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double3 start)
+{
+	size_t ls;
+	cl_int err;
+	size_t iter;
+	size_t gs;
+
+	ls = img->size_line / 4;
+	gs = img->res.x * img->res.y;
+	iter = 20;
+	err = clSetKernelArg(ocl->kernel, 1, sizeof(unsigned int) * 2, &(unsigned int[]){iter, ls});
+	err |= clSetKernelArg(ocl->kernel, 2, sizeof(t_double3), &start);
+	if (err < 0)
+		ft_ocl_err_handler(err, FT_OCL_KERNEL_ARG_ERR);
+	err = clEnqueueNDRangeKernel(ocl->queue, ocl->kernel, 1, NULL, &gs, NULL, 0, NULL, NULL);
+	if (err < 0)
+		ft_ocl_err_handler(err, FT_OCL_ENQUEUE_KERNEL_ERR);
+	err = clEnqueueReadBuffer(ocl->queue, img->buf, CL_TRUE, 0, sizeof(int) * gs, img->data, 0, NULL, NULL);
+	if (err < 0)
+		ft_ocl_err_handler(err, FT_OCL_READ_BUF_ERR);
 }
+
+void ft_ocl_set_env(t_img *img, t_ocl *ocl)
+{
+	size_t gs;
+	cl_int err;
+
+	gs = (size_t)img->res.x * img->res.y;
+	img->buf = clCreateBuffer(ocl->context, CL_MEM_READ_WRITE, sizeof(int) * gs, NULL, &err);
+	if (err < 0)
+		ft_ocl_err_handler(err, FT_OCL_BUFFER_ERR);
+	ocl->queue = clCreateCommandQueue(ocl->context, ocl->device, 0, &err);
+	if (err < 0)
+		ft_ocl_err_handler(err, FT_OCL_QUEUE_ERR);
+	ocl->kernel = clCreateKernel(ocl->program, KERNEL_FUNC, &err);
+	if (err < 0)
+		ft_ocl_err_handler(err, FT_OCL_KERNEL_ERR);
+	err = clSetKernelArg(ocl->kernel, 0, sizeof(cl_mem), &img->buf);
+	if (err < 0)
+		ft_ocl_err_handler(err, FT_OCL_KERNEL_ARG_ERR);
+}
+
 
 int frct_close(void *param)
 {
@@ -90,7 +133,7 @@ int			main(int ac, char **av)
 	t_mlx		mlx;
 	t_img		img;
 	t_ocl		ocl;
-	t_float3	start;
+	t_double3	start;
 
 	ac = ac + 0;
 	av = av + 0;
@@ -101,15 +144,16 @@ int			main(int ac, char **av)
 	img.img_ptr = mlx_new_image(mlx.mlx_ptr, mlx.res[mlx.cw].x, mlx.res[mlx.cw].y);
 	img.data = mlx_get_data_addr(img.img_ptr, &img.bpp, &img.size_line, &img.endian);
 	img.res = (t_uint2){RES, RES};
-	start = (t_float3){-2.0, 2.0, 4.0 / 1024};
+	start = (t_double3){-2.0, 2.0, 4.0 / 1024};
 	ft_ocl_dev_cont_prog(&ocl, PROGRAM_FILE);
-	ft_ocl_set(&ocl, 1000, &img, start);
+	ft_ocl_set_env(&img , &ocl);
+	ft_ocl_make_img(&img, &ocl, start);
 	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], img.img_ptr, 0, 0);
 
 	//put img in window
 	mlx_hook(mlx.win_ptr[mlx.cw], 2, 5, hook_keydwn, NULL);
 	mlx_hook(mlx.win_ptr[mlx.cw], 17, (1L << 3), frct_close, NULL);
-	mlx_hook(mlx.win_ptr[mlx.cw], 4, 0, &mouse_hook, &start);
+	mlx_hook(mlx.win_ptr[mlx.cw], 4, 0, &mouse_hook, (void*[]){&start, &ocl, &img, &mlx});
 	mlx_loop(mlx.mlx_ptr);
 	return (0);
 }
