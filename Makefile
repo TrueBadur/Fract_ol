@@ -14,7 +14,7 @@ NAME = fract_ol
 SRC = $(wildcard *.c) 
 OBJ=$(SRC:.c=.o)
 CC = clang
-#CFLAGS = -Wall -Wextra -Werror
+#CFLAGS = -Wall -Wextra -Werror //todo restore flags
 LIB = libft/libft.a
 LIBOCL = libft/libocl.a
 LIBDIR = libft/
@@ -25,7 +25,7 @@ OCL = -framework OpenCL
 
 all: lib $(OBJ) $(NAME)
 
-$(NAME): $(LIB) $(OBJ)
+$(NAME): $(LIB) $(OBJ) $(LIBOCL)
 	$(CC) $(CFLAGS) $(LIBSPATH) -o $(NAME) $(LINK) $(LIB) $(OCL) $(OBJ) $(LIBOCL)
 
 lib:  

@@ -24,17 +24,12 @@ int		hook_keydwn(int key, void *param)
 
 int		mouse_hook(int but, int x, int y, void *param)
 {
-	static int num = 0;
-	static int butc = 0;
-	t_vec4_f *v;
+	t_double3 *v;
+	t_mlx mlx;
 
-	if (butc == but)
-		num++;
-	else
-		num = 1;
-	butc = but;
-	v = (t_vec4_f*)param;
-	/*if (but == 4 || but == 5 || but == 3)
+	mlx = *(((t_mlx**)param)[3]);
+	v = ((t_double3**)param)[0];
+	if (but == 4 || but == 5 || but == 3)
 	{
 		printf("%d\n", but);
 		if (but == 3)
@@ -42,22 +37,29 @@ int		mouse_hook(int but, int x, int y, void *param)
 			v->x = v->x + (x / 2.0 / 1024 * 4 + 2);
 			v->y = v->y + (y / 2.0 / 1024 * 4 - 2);
 			printf("%f, %f\n", v->x, v->y);
-			if (num == 2)
-				printf("test\n");
 		}
-		else if (but == 5)
+		else if (but == 4)
 		{
-			v->x = (v->u - v->x) / MOUSE_SCROL_SCALE * x / 1024; //TODO
-			v->y -= y * v->z / MOUSE_SCROL_SCALE;
-			printf("%f, %f\n", v->x, v->y);
+			v->x = v->x + x * (v->z - v->z / MOUSE_SCROL_SCALE);
+			v->y =  v->y - y * (v->z - v->z / MOUSE_SCROL_SCALE);
+			v->z /= MOUSE_SCROL_SCALE;
+			printf("test %p\n", ((t_ocl**)param)[2]->device);
+			ft_ocl_make_img(((t_img**)param)[2], ((t_ocl**)param)[1], *v);
+			printf("test\n");
+			mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], ((t_img**)param)[2]->img_ptr, 0, 0);
+
+			printf("float3(%f, %f, %f) %f\n", v->x, v->y, v->z, v->z * 1024);
 		}
 		else
 		{
-			v->x -= x * v->z / MOUSE_SCROL_SCALE;
-			v->y += y * v->z / MOUSE_SCROL_SCALE;
-			printf("%f, %f\n", v->x, v->y);
+			v->x = v->x + x * (v->z - v->z * MOUSE_SCROL_SCALE);
+			v->y =  v->y - y * (v->z - v->z * MOUSE_SCROL_SCALE);
+			v->z *= MOUSE_SCROL_SCALE;
+			ft_ocl_make_img(((t_img**)param)[2], ((t_ocl**)param)[1], *v);
+			printf("float3(%f, %f, %f) %f\n", v->x, v->y, v->z, v->z * 1024);
+			mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], ((t_img**)param)[2]->img_ptr, 0, 0);
 		}
 
-	}*/
+	}
 	return (0);
 }
