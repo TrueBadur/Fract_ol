@@ -18,12 +18,12 @@ OBJ=$(SRC:.c=.o)
 OCL_SRC = ocl.c
 OCL_OBJ = ocl.o
 CC = clang
-CFLAGS = -Wall -Wextra -Werror
+#CFLAGS = -Wall -Wextra -Werror
 
 all: $(SRC) $(NAME) $(OCL_NAME)
 
 $(OCL_NAME): $(OCL_OBJ)
-    @ar r $(OCL_NAME) $(OCL_OBJ)
+	@ar r $(OCL_NAME) $(OCL_OBJ)
 
 ocl: $(OCL_SRC) $(OCL_NAME)
 

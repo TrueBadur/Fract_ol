@@ -47,7 +47,7 @@ static void init_mlx(t_mlx *mlx)
 	mlx->wc = 0;
 	mlx->cw = 0;
 }
-void ft_ocl_set(t_ocl *ocl, size_t iter, t_img *img, t_vec4_f start)
+void ft_ocl_set(t_ocl *ocl, size_t iter, t_img *img, t_vec3_f start)
 {
 	cl_mem output_buf;
 	cl_int err;
@@ -66,7 +66,7 @@ void ft_ocl_set(t_ocl *ocl, size_t iter, t_img *img, t_vec4_f start)
 		ft_ocl_err_handler(err, FT_OCL_KERNEL_ERR);
 	ls = img->size_line / 4;
 	err = clSetKernelArg(ocl->kernel, 0, sizeof(unsigned int) * 2, &(unsigned int[]){iter, ls});
-	err |= clSetKernelArg(ocl->kernel, 1, sizeof(t_vec4_f), &start);
+	err |= clSetKernelArg(ocl->kernel, 1, sizeof(t_vec3_f), &start);
 	err |= clSetKernelArg(ocl->kernel, 2, sizeof(cl_mem), &output_buf);
 	if (err < 0)
 		ft_ocl_err_handler(err, FT_OCL_KERNEL_ARG_ERR);
@@ -90,7 +90,7 @@ int			main(int ac, char **av)
 	t_mlx		mlx;
 	t_img		img;
 	t_ocl		ocl;
-	t_vec4_f	start;
+	t_vec3_f	start;
 
 	ac = ac + 0;
 	av = av + 0;
@@ -101,7 +101,7 @@ int			main(int ac, char **av)
 	img.img_ptr = mlx_new_image(mlx.mlx_ptr, mlx.res[mlx.cw].x, mlx.res[mlx.cw].y);
 	img.data = mlx_get_data_addr(img.img_ptr, &img.bpp, &img.size_line, &img.endian);
 	img.res = (t_vec2){RES, RES};
-	start = (t_vec4_f){-2.0, 2.0, 2.0, -2.0};
+	start = (t_vec3_f){-2.0, 2.0, 4.0 / 1024};
 	ft_ocl_dev_cont_prog(&ocl, PROGRAM_FILE);
 	ft_ocl_set(&ocl, 1000, &img, start);
 	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], img.img_ptr, 0, 0);

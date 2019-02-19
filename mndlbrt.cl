@@ -1,4 +1,4 @@
-__kernel void mndlbrt(const uint2 it_len, const float4 start, __global int *img)
+__kernel void mndlbrt(const uint2 it_len, const float3 start, __global int *img)
 {
 	float2 prev;
 	float2 value;
