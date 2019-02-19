@@ -20,7 +20,7 @@ OCL_OBJ = ocl.o
 CC = clang
 CFLAGS = -Wall -Wextra -Werror
 
-all: $(SRC) $(NAME)
+all: $(SRC) $(NAME) $(OCL_NAME)
 
 $(OCL_NAME): $(OCL_OBJ)
     @ar r $(OCL_NAME) $(OCL_OBJ)
