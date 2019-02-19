@@ -42,6 +42,14 @@ typedef struct		s_vector4
 	int	color;
 }					t_vec4;
 
+typedef struct		s_vector4_f
+{
+	float		x;
+	float		y;
+	float		u;
+	float		v;
+}					t_vec4_f;
+
 typedef struct		s_vector
 {
 	void			*data;
