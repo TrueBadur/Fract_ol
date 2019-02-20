@@ -32,16 +32,17 @@ static void init_mlx(t_mlx *mlx)
 	mlx->cw = 0;
 }
 
-size_t ft_get_iters(t_double3 start)
+size_t ft_get_iters(t_double3 start, float mult)
 {
 	size_t  ret;
 
-	ret = (size_t)(1 / start.z / 100 + 100);
+	ret = (size_t)(1 / start.z / 4 * mult);
+	ret = ret > 1600000 ? 1600000 : ret;
 	printf("number of iterations = %zu\n", ret);
 	return (ret);
 }
 
-void ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double3 start)
+void ft_ocl_make_img(t_img *img, t_ocl *ocl)
 {
 	size_t ls;
 	cl_int err;
@@ -50,9 +51,9 @@ void ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double3 start)
 
 	ls = img->size_line / 4;
 	gs = img->res.x * img->res.y;
-	iter = ft_get_iters(start);
+	iter = ft_get_iters(img->start, img->mult);
 	err = clSetKernelArg(ocl->kernel, 1, sizeof(unsigned int) * 2, &(unsigned int[]){iter, ls});
-	err |= clSetKernelArg(ocl->kernel, 2, sizeof(t_double3), &start);
+	err |= clSetKernelArg(ocl->kernel, 2, sizeof(t_double3), &img->start);
 	if (err < 0)
 		ft_ocl_err_handler(err, FT_OCL_KERNEL_ARG_ERR);
 	err = clEnqueueNDRangeKernel(ocl->queue, ocl->kernel, 1, NULL, &gs, NULL, 0, NULL, NULL);
@@ -95,7 +96,6 @@ int			main(int ac, char **av)
 	t_mlx		mlx;
 	t_img		img;
 	t_ocl		ocl;
-	t_double3	start;
 
 	ac = ac + 0;
 	av = av + 0;
@@ -106,16 +106,17 @@ int			main(int ac, char **av)
 	img.img_ptr = mlx_new_image(mlx.mlx_ptr, mlx.res[mlx.cw].x, mlx.res[mlx.cw].y);
 	img.data = mlx_get_data_addr(img.img_ptr, &img.bpp, &img.size_line, &img.endian);
 	img.res = (t_uint2){RES, RES};
-	start = (t_double3){-2.0, 2.0, 4.0 / 1024};
+	img.start = (t_double3){-2.0, 2.0, 4.0 / 1024};
+	img.mult = 1;
 	ft_ocl_dev_cont_prog(&ocl, PROGRAM_FILE);
 	ft_ocl_set_env(&img , &ocl);
-	ft_ocl_make_img(&img, &ocl, start);
+	ft_ocl_make_img(&img, &ocl);
 	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], img.img_ptr, 0, 0);
 
 	//put img in window
-	mlx_hook(mlx.win_ptr[mlx.cw], 2, 5, hook_keydwn, NULL);
+	mlx_hook(mlx.win_ptr[mlx.cw], 2, 5, hook_keydwn, (void*[]){&ocl, &img, &mlx});
 	mlx_hook(mlx.win_ptr[mlx.cw], 17, (1L << 3), frct_close, NULL);
-	mlx_hook(mlx.win_ptr[mlx.cw], 4, 0, &mouse_hook, (void*[]){&start, &ocl, &img, &mlx});
+	mlx_hook(mlx.win_ptr[mlx.cw], 4, 0, &mouse_hook, (void*[]){&ocl, &img, &mlx});
 	mlx_loop(mlx.mlx_ptr);
 	return (0);
 }
