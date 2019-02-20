@@ -12,7 +12,6 @@
 
 #include <stdio.h>
 #include "fractol.h"
-#include "libft/ocl.h"
 #define PROGRAM_FILE "mndlbrt.cl"
 #define KERNEL_FUNC "mndlbrt"
 #define RES 1024
@@ -33,6 +32,15 @@ static void init_mlx(t_mlx *mlx)
 	mlx->cw = 0;
 }
 
+size_t ft_get_iters(t_double3 start)
+{
+	size_t  ret;
+
+	ret = (size_t)(1 / start.z / 100 + 100);
+	printf("number of iterations = %zu\n", ret);
+	return (ret);
+}
+
 void ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double3 start)
 {
 	size_t ls;
@@ -42,7 +50,7 @@ void ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double3 start)
 
 	ls = img->size_line / 4;
 	gs = img->res.x * img->res.y;
-	iter = 20;
+	iter = ft_get_iters(start);
 	err = clSetKernelArg(ocl->kernel, 1, sizeof(unsigned int) * 2, &(unsigned int[]){iter, ls});
 	err |= clSetKernelArg(ocl->kernel, 2, sizeof(t_double3), &start);
 	if (err < 0)
