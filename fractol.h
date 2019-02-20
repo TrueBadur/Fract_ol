@@ -57,6 +57,8 @@ typedef struct	s_img
 	int			endian;
 	t_uint2		res;
 	cl_mem 		buf;
+	float 		mult;
+	t_double3	start;
 }				t_img;
 
 typedef union	u_color
@@ -65,7 +67,7 @@ typedef union	u_color
 	char	argb[4];
 }				t_color;
 
-void 		ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double3 start);
+void 		ft_ocl_make_img(t_img *img, t_ocl *ocl);
 int				hook_keydwn(int key, void *param);
 int				mouse_hook(int but, int x, int y, void *param);
 #endif
