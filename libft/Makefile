@@ -1,4 +1,3 @@
-# q
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
@@ -15,27 +14,17 @@ NAME = libft.a
 OCL_NAME = libocl.a
 SRC = $(wildcard ft*.c) get_next_line.c
 OBJ = $(SRC:.c=.o)
-OCL_SRC = ocl.c
-OCL_OBJ = ocl.o
+OCL_SRC = $(wildcard ft_ocl/*.c)
+OCL_OBJ = $(OCL_SRC:.c=.o)
 CC = clang
 #CFLAGS = -Wall -Wextra -Werror
 
-all: $(SRC) $(NAME) ocl
+.c.a:
+	@$(CC) $(CFLAGS) -c $< -o $*.o
+	@ar r $@ $*.o
+	@rm $*.o
 
-ocl: $(OCL_OBJ)
-	ar r $(OCL_NAME) $(OCL_OBJ)
-
-$(NAME): $(OBJ)
-	ar r $(NAME) $(OBJ)
-
-#main: $(NAME) main.c
-#	@$(CC) $(CFLAGS) main.c -o main $(NAME)
-
-%.o: %.c $(HDR)
-#	echo "\x1B[31m"
-#	norminette $<
-#	echo "\x1B[37m"
-	$(CC) $(CFLAGS) -c $< -o $@
+all: libft.a($(OBJ)) libocl.a($(OCL_OBJ))
 
 fclean: clean
 	@/bin/rm -f $(NAME) $(OCL_NAME)
