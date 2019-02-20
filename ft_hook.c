@@ -13,22 +13,41 @@
 #include "fractol.h"
 #include <stdio.h>
 
+void ft_redraw(void *param)
+{
+	t_mlx mlx;
+	t_ocl *ocl;
+	t_img *img;
+	t_double3 *v;
+
+	mlx = *(((t_mlx**)param)[2]);
+	ocl = ((t_ocl**)param)[0];
+	img = ((t_img**)param)[1];
+	v = &((t_img**)param)[1]->start;
+	ft_ocl_make_img(img, ocl);
+	printf("float3(%f, %f, %f) %f\n", v->x, v->y, v->z, v->z * 1024);
+	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], img->img_ptr, 0, 0);
+}
+
 int		hook_keydwn(int key, void *param)
 {
 
-	param = NULL;
+	printf("key pressed = %d\n", key);
+	printf("nan test %d\n", (int) (0.f/0.f));
 	if (key == 53)
 		exit(0);
+	if (key == 24 || key == 27)
+		((t_img**)param)[1]->mult += (key == 24) ? .01 : -.01;
+	ft_redraw(param);
 	return (0);
 }
 
 int		mouse_hook(int but, int x, int y, void *param)
 {
 	t_double3 *v;
-	t_mlx mlx;
 
-	mlx = *(((t_mlx**)param)[3]);
-	v = ((t_double3**)param)[0];
+	v = &((t_img**)param)[1]->start;
+	printf("mouse_hook\n");
 	if (but == 4 || but == 5 || but == 3)
 	{
 		printf("%d\n", but);
@@ -43,23 +62,14 @@ int		mouse_hook(int but, int x, int y, void *param)
 			v->x = v->x + x * (v->z - v->z / MOUSE_SCROL_SCALE);
 			v->y =  v->y - y * (v->z - v->z / MOUSE_SCROL_SCALE);
 			v->z /= MOUSE_SCROL_SCALE;
-			printf("test %p\n", ((t_ocl**)param)[2]->device);
-			ft_ocl_make_img(((t_img**)param)[2], ((t_ocl**)param)[1], *v);
-			printf("test\n");
-			mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], ((t_img**)param)[2]->img_ptr, 0, 0);
-
-			printf("float3(%f, %f, %f) %f\n", v->x, v->y, v->z, v->z * 1024);
 		}
 		else
 		{
 			v->x = v->x + x * (v->z - v->z * MOUSE_SCROL_SCALE);
 			v->y =  v->y - y * (v->z - v->z * MOUSE_SCROL_SCALE);
 			v->z *= MOUSE_SCROL_SCALE;
-			ft_ocl_make_img(((t_img**)param)[2], ((t_ocl**)param)[1], *v);
-			printf("float3(%f, %f, %f) %f\n", v->x, v->y, v->z, v->z * 1024);
-			mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], ((t_img**)param)[2]->img_ptr, 0, 0);
 		}
-
 	}
+	ft_redraw(param);
 	return (0);
 }
