@@ -14,7 +14,7 @@
 #include "fractol.h"
 #define PROGRAM_FILE "mndlbrt.cl"
 #define KERNEL_FUNC "mndlbrt"
-#define RES 1024
+
 
 void ft_mlx_create_new_window(t_mlx *mlx, t_int2 res, char *name)
 {
@@ -35,8 +35,11 @@ static void init_mlx(t_mlx *mlx)
 size_t ft_get_iters(t_double3 start, float mult)
 {
 	size_t  ret;
+	int x = 1 / start.z;
 
-	ret = (size_t)(1 / start.z / 4 * mult);
+	//ret = (size_t)(x / 12000 * 50 * log10(x - 200));
+	//ret = (size_t)(sqrt(.5 * x) * log10(sqrt(x - 100)) + 100);
+	ret = log((x -250) /100 + 2) * 200 * mult;
 	ret = ret > 1600000 ? 1600000 : ret;
 	printf("number of iterations = %zu\n", ret);
 	return (ret);
@@ -106,7 +109,7 @@ int			main(int ac, char **av)
 	img.img_ptr = mlx_new_image(mlx.mlx_ptr, mlx.res[mlx.cw].x, mlx.res[mlx.cw].y);
 	img.data = mlx_get_data_addr(img.img_ptr, &img.bpp, &img.size_line, &img.endian);
 	img.res = (t_uint2){RES, RES};
-	img.start = (t_double3){-2.0, 2.0, 4.0 / 1024};
+	img.start = (t_double3){-2.0, 2.0, 4.0 / RES};
 	img.mult = 1;
 	ft_ocl_dev_cont_prog(&ocl, PROGRAM_FILE);
 	ft_ocl_set_env(&img , &ocl);
