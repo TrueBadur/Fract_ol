@@ -26,6 +26,12 @@ typedef struct
 	unsigned	y;
 }					t_uint2;
 
+typedef struct
+{
+	double		x;
+	double		y;
+}					t_double2;
+
 typedef struct		s_vector3
 {
 	int		x;
