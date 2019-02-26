@@ -25,11 +25,14 @@ void ft_mlx_create_new_window(t_mlx *mlx, t_int2 res, char *name)
 	mlx->wc++;
 }
 
-static void init_mlx(t_mlx *mlx)
+static void init(t_mlx *mlx, t_manager *mngr)
 {
 	mlx->mlx_ptr = mlx_init();
 	mlx->wc = 0;
 	mlx->cw = 0;
+	mngr->img_num = 1;
+	mngr->cur_img = 0;
+	mngr->mouse_mask = 0;
 }
 
 size_t ft_get_iters(t_double3 start, float mult)
@@ -96,30 +99,35 @@ int frct_close(void *param)
 
 int			main(int ac, char **av)
 {
+	t_manager	mngr;
 	t_mlx		mlx;
-	t_img		img;
+	t_img		*img;
 	t_ocl		ocl;
 
 	ac = ac + 0;
 	av = av + 0;
-	init_mlx(&mlx);	
+	init(&mlx, &mngr);
 	ft_mlx_create_new_window(&mlx, (t_int2){RES, RES}, "test");
 	//create mandelbrot img
 	//init img
-	img.img_ptr = mlx_new_image(mlx.mlx_ptr, mlx.res[mlx.cw].x, mlx.res[mlx.cw].y);
-	img.data = mlx_get_data_addr(img.img_ptr, &img.bpp, &img.size_line, &img.endian);
-	img.res = (t_uint2){RES, RES};
-	img.start = (t_double3){-2.0, 2.0, 4.0 / RES};
-	img.mult = 1;
+	img = &mngr.imgs[0];
+
+	img->img_ptr = mlx_new_image(mlx.mlx_ptr, mlx.res[mlx.cw].x, mlx.res[mlx.cw].y);
+	img->data = mlx_get_data_addr(img->img_ptr, &img->bpp, &img->size_line, &img->endian);
+	img->res = (t_uint2){RES, RES};
+	img->start = (t_double3){-2.0, 2.0, 4.0 / RES};
+	img->mult = 1;
 	ft_ocl_dev_cont_prog(&ocl, PROGRAM_FILE);
-	ft_ocl_set_env(&img , &ocl);
-	ft_ocl_make_img(&img, &ocl);
-	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], img.img_ptr, 0, 0);
+	ft_ocl_set_env(img , &ocl);
+	ft_ocl_make_img(img, &ocl);
+	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], img->img_ptr, 0, 0);
 
 	//put img in window
-	mlx_hook(mlx.win_ptr[mlx.cw], 2, 5, hook_keydwn, (void*[]){&ocl, &img, &mlx});
+	mlx_hook(mlx.win_ptr[mlx.cw], 2, 5, hook_keydwn, (void*[]){&ocl, &mngr, &mlx});
 	mlx_hook(mlx.win_ptr[mlx.cw], 17, (1L << 3), frct_close, NULL);
-	mlx_hook(mlx.win_ptr[mlx.cw], 4, 0, &mouse_hook, (void*[]){&ocl, &img, &mlx});
+	mlx_hook(mlx.win_ptr[mlx.cw], 4, 0, &mouse_hook, (void*[]){&ocl, &mngr, &mlx});
+	mlx_hook(mlx.win_ptr[mlx.cw], 6, 0, &mouse_move_handle, (void*[]){&ocl, &mngr, &mlx});
+	mlx_hook(mlx.win_ptr[mlx.cw], 5, 0, &mouse_release, (void*[]){&ocl, &mngr, &mlx});
 	mlx_loop(mlx.mlx_ptr);
 	return (0);
 }
