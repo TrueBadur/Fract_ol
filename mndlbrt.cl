@@ -1,4 +1,5 @@
-__kernel void mndlbrt(__global int *img, const uint2 it_len, const double3 start)
+__kernel void mndlbrt(__global int *img, const uint2 it_len, const double3 start,
+		const float3 col)
 {
 	double4 prev;
 	double2 value;
@@ -37,6 +38,6 @@ __kernel void mndlbrt(__global int *img, const uint2 it_len, const double3 start
 		prev.x = (float)i - log2(log2(xs + ys)) + 4.0;
 	else
 		prev.x = (float)i + 4.0;
-	double3 bla = 256 * (0.5 + 0.5*cos((3.0 + prev.x * 0.15 + (double3){0.0,0.6,1.0})));
+	double3 bla = 256 * (0.5 + 0.5*cos((3.0 + prev.x * 0.15 + (double3){col.x, col.y, col.z})));
 	img[gi] = (((int)(bla.x)) << 16) | ((int)(bla.y)) << 8 | ((int)(bla.z));
 }
