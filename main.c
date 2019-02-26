@@ -33,33 +33,23 @@ static void init(t_mlx *mlx, t_manager *mngr)
 	mngr->img_num = 1;
 	mngr->cur_img = 0;
 	mngr->mouse_mask = 0;
+	mngr->key_mask = 0;
+	mngr->imgs[mngr->cur_img].col = (t_float3){0.0, 0.6, 1.0};
 }
 
-size_t ft_get_iters(t_double3 start, float mult)
-{
-	size_t  ret;
-	int x = 1 / start.z;
-
-	//ret = (size_t)(x / 12000 * 50 * log10(x - 200));
-	//ret = (size_t)(sqrt(.5 * x) * log10(sqrt(x - 100)) + 100);
-	ret = log((x -250) /100 + 2) * 200 * mult;
-	ret = ret > 1600000 ? 1600000 : ret;
-	printf("number of iterations = %zu\n", ret);
-	return (ret);
-}
 
 void ft_ocl_make_img(t_img *img, t_ocl *ocl)
 {
 	size_t ls;
 	cl_int err;
-	size_t iter;
 	size_t gs;
 
 	ls = img->size_line / 4;
 	gs = img->res.x * img->res.y;
-	iter = ft_get_iters(img->start, img->mult);
-	err = clSetKernelArg(ocl->kernel, 1, sizeof(unsigned int) * 2, &(unsigned int[]){iter, ls});
+
+	err = clSetKernelArg(ocl->kernel, 1, sizeof(unsigned int) * 2, &(unsigned int[]){img->iter, ls});
 	err |= clSetKernelArg(ocl->kernel, 2, sizeof(t_double3), &img->start);
+	err |= clSetKernelArg(ocl->kernel, 3, sizeof(t_float3), &img->col);
 	if (err < 0)
 		ft_ocl_err_handler(err, FT_OCL_KERNEL_ARG_ERR);
 	err = clEnqueueNDRangeKernel(ocl->queue, ocl->kernel, 1, NULL, &gs, NULL, 0, NULL, NULL);
@@ -116,7 +106,7 @@ int			main(int ac, char **av)
 	img->data = mlx_get_data_addr(img->img_ptr, &img->bpp, &img->size_line, &img->endian);
 	img->res = (t_uint2){RES, RES};
 	img->start = (t_double3){-2.0, 2.0, 4.0 / RES};
-	img->mult = 1;
+	img->iter = 101;
 	ft_ocl_dev_cont_prog(&ocl, PROGRAM_FILE);
 	ft_ocl_set_env(img , &ocl);
 	ft_ocl_make_img(img, &ocl);
@@ -124,6 +114,7 @@ int			main(int ac, char **av)
 
 	//put img in window
 	mlx_hook(mlx.win_ptr[mlx.cw], 2, 5, hook_keydwn, (void*[]){&ocl, &mngr, &mlx});
+	mlx_hook(mlx.win_ptr[mlx.cw], 3, 5, hook_keyrelease, (void*[]){&ocl, &mngr, &mlx});
 	mlx_hook(mlx.win_ptr[mlx.cw], 17, (1L << 3), frct_close, NULL);
 	mlx_hook(mlx.win_ptr[mlx.cw], 4, 0, &mouse_hook, (void*[]){&ocl, &mngr, &mlx});
 	mlx_hook(mlx.win_ptr[mlx.cw], 6, 0, &mouse_move_handle, (void*[]){&ocl, &mngr, &mlx});
