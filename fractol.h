@@ -22,6 +22,7 @@
 #define KERNEL_FUNC "mndlbrt"
 #define KERN_NUMBER 1
 #define RES 1024
+#define MAX_IMGS 10
 # define MW_NAME "FDF by bparker and ehugh-be"
 # define CONT_ERR 5
 # define CONT_ERR_MSG "error: wrong data in file\n"
@@ -67,7 +68,18 @@ typedef union	u_color
 	char	argb[4];
 }				t_color;
 
-void 		ft_ocl_make_img(t_img *img, t_ocl *ocl);
+typedef struct
+{
+	t_int2	mse_mv_crd[3];
+	char 	mouse_mask;
+	t_img	imgs[MAX_IMGS];
+	int 	img_num;
+	int 	cur_img;
+}				t_manager;
+
+void 			ft_ocl_make_img(t_img *img, t_ocl *ocl);
 int				hook_keydwn(int key, void *param);
 int				mouse_hook(int but, int x, int y, void *param);
+int				mouse_move_handle(int x, int y, void *param);
+int				mouse_release(int but, int x, int y, void *param);
 #endif
