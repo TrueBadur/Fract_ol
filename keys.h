@@ -19,4 +19,6 @@
 # define SHIFT key == 257
 # define CNTRL key == 256
 # define CMND key == 259
+# define INFO key == 34
+# define RESTART key == 15
 #endif
