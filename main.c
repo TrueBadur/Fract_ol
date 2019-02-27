@@ -106,7 +106,7 @@ int			main(int ac, char **av)
 	img->img_ptr = mlx_new_image(mlx.mlx_ptr, mlx.res[mlx.cw].x, mlx.res[mlx.cw].y);
 	img->data = mlx_get_data_addr(img->img_ptr, &img->bpp, &img->size_line, &img->endian);
 	img->res = (t_uint2){RES, RES};
-	img->start = (t_double3){-2.15, 1.5, 3.0 / RES};
+	img->start = (t_double3){-2.15, -1.5, 3.0 / RES};
 	img->iter = 101;
 	ft_ocl_dev_cont_prog(&ocl, PROGRAM_FILE);
 	ft_ocl_set_env(img , &ocl);

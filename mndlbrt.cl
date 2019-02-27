@@ -1,5 +1,3 @@
-__local int *f() = {&tan, &sin};
-
 __kernel void mndlbrt(__global int *img, const uint2 it_len, const double3 start,
 		const float3 col)
 {
@@ -86,7 +84,6 @@ __kernel void brnng_shp(__global int *img, const uint2 it_len, const double3 sta
 	unsigned int gi;
 	unsigned int i;
 	double xs = 0, ys = 0;
-	double m = test[0](1);
 
 	prev = 0.0;
 	gi = get_global_id(0);
@@ -100,7 +97,7 @@ __kernel void brnng_shp(__global int *img, const uint2 it_len, const double3 sta
 	{
 		xs = prev.x * prev.x;
 		ys = prev.y * prev.y;
-		prev.zw = ((double2){xs - ys + value.x),
+		prev.zw = ((double2){xs - ys + value.x,
 							 (2 * prev.x * prev.y) + value.y});
 		if (prev.z == prev.x && prev.w == prev.y)
 		{
