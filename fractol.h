@@ -20,9 +20,9 @@
 # include <fcntl.h>
 # define  MOUSE_SCROL_SCALE 1.2
 #define PROGRAM_FILE "mndlbrt.cl"
-#define KERNEL_FUNC "mndlbrt"
+#define KERNEL_FUNC "brnng_shp"
 #define KERN_NUMBER 1
-#define RES 1024
+#define RES 1200
 #define MAX_IMGS 10
 # define CNTRL_DOWN (1 << 1)
 # define SHIFT_DOWN (1 << 0)
@@ -32,6 +32,7 @@
 # define CMND_RLS ~(1 << 2)
 # define IS_CNTRL_DOWN (mngr->key_mask & CNTRL_DOWN)
 # define IS_SHIFT_DOWN (mngr->key_mask & SHIFT_DOWN)
+# define INFO_I_RES (t_int2){RES, 30}
 # define IS_CMD_DOWN (mngr->key_mask & CMND_DOWN)
 # define MW_NAME "FDF by bparker and ehugh-be"
 # define CONT_ERR 5
@@ -69,6 +70,7 @@ typedef struct	s_img
 	t_uint2		res;
 	cl_mem 		buf;
 	size_t 		iter;
+	int 		iter_mod;
 	t_double3	start;
 	t_float3	col;
 }				t_img;
@@ -79,6 +81,21 @@ typedef union	u_color
 	char	argb[4];
 }				t_color;
 
+typedef enum
+{
+	MNDLBRT,
+	JULIA,
+}				t_frctls;
+
+typedef enum
+{
+	MAIN_I,
+	INFO_I,
+	TOP_RIGHT_I,
+	MID_RIGHT_I,
+	BOT_RIGHT_I
+}				t_imgs;
+
 typedef struct
 {
 	t_int2	mse_mv_crd[3];
@@ -87,6 +104,7 @@ typedef struct
 	int 	cur_img;
 	char 	mouse_mask;
 	char 	key_mask;
+	char	info;
 }				t_manager;
 
 void 			ft_ocl_make_img(t_img *img, t_ocl *ocl);
