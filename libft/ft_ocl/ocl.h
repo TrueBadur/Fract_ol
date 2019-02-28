@@ -31,7 +31,7 @@ typedef struct s_ocl
     cl_context      context;
     cl_device_id    device;
     cl_program      program;
-    cl_kernel       kernel;
+    cl_kernel       *kernel;
     cl_command_queue    queue;
 }				t_ocl;
 

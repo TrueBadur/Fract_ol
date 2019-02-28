@@ -20,9 +20,14 @@
 # include <fcntl.h>
 # define  MOUSE_SCROL_SCALE 1.2
 #define PROGRAM_FILE "mndlbrt.cl"
-#define KERNEL_FUNC "brnng_shp"
-#define KERN_NUMBER 1
+#define FRACTAL_NUMBER 8
+#define FRACTAL_PRV (FRACTAL_NUMBER - 1)
 #define RES 1200
+#define MNDLBRT_START (t_double3){-2.15, -1.5, 3.0 / RES}
+#define JULIA_START (t_double3){-1.76, -1.56, 3.4 / RES}
+#define BRNNG_SHP_START (t_double3){-2.35, -2.55, 4.0 / RES}
+#define TANTAN_START (t_double3){-17.48, -17.6, 35.0 / RES}
+#define FABSTAN_START (t_double3){-17.48, -17.6, 35.0 / RES}
 #define MAX_IMGS 10
 # define CNTRL_DOWN (1 << 1)
 # define SHIFT_DOWN (1 << 0)
@@ -33,23 +38,7 @@
 # define IS_CNTRL_DOWN (mngr->key_mask & CNTRL_DOWN)
 # define IS_SHIFT_DOWN (mngr->key_mask & SHIFT_DOWN)
 # define INFO_I_RES (t_int2){RES, 30}
-# define IS_CMD_DOWN (mngr->key_mask & CMND_DOWN)
-# define MW_NAME "FDF by bparker and ehugh-be"
-# define CONT_ERR 5
-# define CONT_ERR_MSG "error: wrong data in file\n"
-# define CONT_ERR_CS 51
-# define CONT_ERR_CS_MSG "wrong start of color sequence\n"
-# define CONT_ERR_CE 52
-# define CONT_ERR_CE_MSG "wrong end of color sequence\n"
-# define CONT_ERR_NE 53
-# define CONT_ERR_NE_MSG "wrong number format\n"
-# define CONT_ERR_NO 54
-# define CONT_ERR_NO_MSG "wrong number of objects in line\n"
-# define FILE_ERROR 3
-# define FILE_ERROR_MSG "error: can't open file\n"
-# define ARG_ERROR 3
-# define ARG_ERROR_MSG "error: insufficient number of arguments\n"
-# define USAGE_MSG "usage: ./fdf file_to_open [window_width window_height]\n"
+
 
 typedef struct	s_mlx
 {
@@ -64,10 +53,13 @@ typedef struct	s_img
 {
 	void		*img_ptr;
 	char		*data;
+	char		kern;
 	int			bpp;
 	int			size_line;
 	int			endian;
 	t_uint2		res;
+	t_uint2		pos;
+
 	cl_mem 		buf;
 	size_t 		iter;
 	int 		iter_mod;
@@ -84,21 +76,32 @@ typedef union	u_color
 typedef enum
 {
 	MNDLBRT,
+	BRNNG_SHP,
+	TANTAN,
+	FABS_TAN,
 	JULIA,
+	JULIA_TANTAN,
+	JULIA_FABSTAN,
+	JULIA_FABSFABS,
 }				t_frctls;
 
 typedef enum
 {
-	MAIN_I,
 	INFO_I,
-	TOP_RIGHT_I,
-	MID_RIGHT_I,
-	BOT_RIGHT_I
+	MAIN_I,
+	RIGHT1_I,
+	RIGHT2_I,
+	RIGHT3_I,
+	RIGHT4_I,
+	RIGHT5_I,
+	RIGHT6_I,
+	RIGHT7_I
 }				t_imgs;
 
 typedef struct
 {
 	t_int2	mse_mv_crd[3];
+	t_double2	jc;
 	t_img	imgs[MAX_IMGS];
 	int 	img_num;
 	int 	cur_img;
@@ -107,7 +110,8 @@ typedef struct
 	char	info;
 }				t_manager;
 
-void 			ft_ocl_make_img(t_img *img, t_ocl *ocl);
+void 			ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc);
+int 			frct_close(void *param);
 int				hook_keydwn(int key, void *param);
 int				mouse_hook(int but, int x, int y, void *param);
 int				mouse_move_handle(int x, int y, void *param);

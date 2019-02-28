@@ -107,4 +107,7 @@ void ft_ocl_dev_cont_prog(t_ocl *ocl, char *pr_name)
     if (err < 0)
         ft_ocl_err_handler(err, FT_OCL_CONTEXT_ERR);
     ocl->program = ft_build_program(ocl->context, ocl->device, pr_name);
+    ocl->queue = clCreateCommandQueue(ocl->context, ocl->device, 0, &err);
+    if (err < 0)
+        ft_ocl_err_handler(err, FT_OCL_QUEUE_ERR);
 }
