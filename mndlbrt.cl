@@ -1,4 +1,4 @@
-__kernel void mndlbrt(__global int *img, const uint2 it_len, const double3 start,
+__kernel void mndlbrt(__global int *img, const ulong2 it_len, const double3 start,
 		const float3 col)
 {
 	double4 prev;
@@ -47,7 +47,7 @@ __kernel void mndlbrt(__global int *img, const uint2 it_len, const double3 start
 	img[gi] = (((int)(bla.x)) << 16) | ((int)(bla.y)) << 8 | ((int)(bla.z));
 }
 
-__kernel void brnng_shp(__global int *img, const uint2 it_len, const double3 start,
+__kernel void brnng_shp(__global int *img, const ulong2 it_len, const double3 start,
 					  const float3 col)
 {
 	double4 prev;
@@ -92,7 +92,7 @@ __kernel void brnng_shp(__global int *img, const uint2 it_len, const double3 sta
 
 
 
-__kernel void tantan(__global int *img, const uint2 it_len, const double3 start,
+__kernel void tantan(__global int *img, const ulong2 it_len, const double3 start,
 						const float3 col)
 {
 	double4 prev;
@@ -135,7 +135,7 @@ __kernel void tantan(__global int *img, const uint2 it_len, const double3 start,
 	img[gi] = (((int)(bla.x)) << 16) | ((int)(bla.y)) << 8 | ((int)(bla.z));
 }
 
-__kernel void fabs_tan(__global int *img, const uint2 it_len, const double3 start,
+__kernel void fabs_tan(__global int *img, const ulong2 it_len, const double3 start,
 						const float3 col)
 {
 	double4 prev;
@@ -178,7 +178,7 @@ __kernel void fabs_tan(__global int *img, const uint2 it_len, const double3 star
 	img[gi] = (((int)(bla.x)) << 16) | ((int)(bla.y)) << 8 | ((int)(bla.z));
 }
 
-__kernel void julia(__global int *img, const uint2 it_len, const double3 start,
+__kernel void julia(__global int *img, const ulong2 it_len, const double3 start,
 					const float3 col, const double2 c)
 {
 	double4 prev;
@@ -220,7 +220,7 @@ __kernel void julia(__global int *img, const uint2 it_len, const double3 start,
 	img[gi] = (((int)(bla.x)) << 16) | ((int)(bla.y)) << 8 | ((int)(bla.z));
 }
 
-__kernel void julia_fabsfabs(__global int *img, const uint2 it_len, const double3 start,
+__kernel void julia_fabsfabs(__global int *img, const ulong2 it_len, const double3 start,
 						   const float3 col, const double2 c)
 {
 	double4 prev;
@@ -262,7 +262,7 @@ __kernel void julia_fabsfabs(__global int *img, const uint2 it_len, const double
 	img[gi] = (((int)(bla.x)) << 16) | ((int)(bla.y)) << 8 | ((int)(bla.z));
 }
 
-__kernel void julia_tantan(__global int *img, const uint2 it_len, const double3 start,
+__kernel void julia_tantan(__global int *img, const ulong2 it_len, const double3 start,
 						   const float3 col, const double2 c)
 {
 	double4 prev;
@@ -304,7 +304,7 @@ __kernel void julia_tantan(__global int *img, const uint2 it_len, const double3 
 	img[gi] = (((int)(bla.x)) << 16) | ((int)(bla.y)) << 8 | ((int)(bla.z));
 }
 
-__kernel void julia_fabstan(__global int *img, const uint2 it_len, const double3 start,
+__kernel void julia_fabstan(__global int *img, const ulong2 it_len, const double3 start,
 						   const float3 col, const double2 c)
 {
 	double4 prev;

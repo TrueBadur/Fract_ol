@@ -31,13 +31,13 @@ typedef struct s_ocl
     cl_context      context;
     cl_device_id    device;
     cl_program      program;
-    cl_kernel       *kernel;
+    cl_kernel       *kern;
     cl_command_queue    queue;
 }				t_ocl;
 
 cl_device_id	ft_create_device(void);
 cl_program		ft_build_program(cl_context ctx, cl_device_id dev,
 		const char* fname);
-void ft_ocl_err_handler(cl_int err, const char *message);
+void ft_ocl_err_handler(const char *message);
 void ft_ocl_dev_cont_prog(t_ocl *ocl, char *pr_name);
 #endif

@@ -92,10 +92,10 @@ cl_program ft_build_program(cl_context ctx, cl_device_id dev, const char* fname)
     return pr;
 }
 
-void ft_ocl_err_handler(cl_int err, const char *message)
+void ft_ocl_err_handler(const char *message)
 {
     printf("%s\n", message);
-    exit(err);
+    exit(10);
 }
 
 void ft_ocl_dev_cont_prog(t_ocl *ocl, char *pr_name)
@@ -105,9 +105,9 @@ void ft_ocl_dev_cont_prog(t_ocl *ocl, char *pr_name)
     ocl->device = ft_create_device();
     ocl->context = clCreateContext(NULL, 1, &ocl->device, NULL, NULL, &err);
     if (err < 0)
-        ft_ocl_err_handler(err, FT_OCL_CONTEXT_ERR);
+        ft_ocl_err_handler(err);
     ocl->program = ft_build_program(ocl->context, ocl->device, pr_name);
     ocl->queue = clCreateCommandQueue(ocl->context, ocl->device, 0, &err);
     if (err < 0)
-        ft_ocl_err_handler(err, FT_OCL_QUEUE_ERR);
+        ft_ocl_err_handler(err);
 }

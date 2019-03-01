@@ -65,7 +65,7 @@ typedef struct		s_vector4
 	int	x;
 	int	y;
 	int	z;
-	int	color;
+	int	w;
 }					t_int4;
 
 typedef struct		s_vector4_f
