@@ -68,6 +68,12 @@ typedef struct		s_vector4
 	int	w;
 }					t_int4;
 
+typedef union
+{
+	long	l;
+	double	d;
+}					t_dtol;
+
 typedef struct		s_vector4_f
 {
 	float		x;
@@ -90,6 +96,7 @@ void				ft_vecdel(void **vect);
 t_vector			*ft_vecpush(t_vector *vec, void *data, size_t s);
 t_vector			*ft_vecgrow(t_vector *vec, size_t s);
 t_vector			*ft_vecshrink(t_vector *vec, unsigned int offset);
+t_vector			*ft_vecremove(t_vector *vec, size_t strt, size_t s);
 
 typedef struct		s_string
 {

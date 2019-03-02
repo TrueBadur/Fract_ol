@@ -70,8 +70,8 @@ int			main(int ac, char **av)
 	mngr.res = 1200; //TODO get from arguments;
 	init(&mngr);
 	init_main(&mngr, MNDLBRT);
-	init_previews(&mngr, MNDLBRT);
-	init_col_previews(&mngr, MNDLBRT);
+	init_r_col(&mngr, MNDLBRT);
+	init_l_col(&mngr);
 	mlx = mngr.mlx;
 	mlx_hook(mlx.win_ptr[mlx.cw], 2, 5, hook_keydwn, (void*)&mngr);
 	mlx_hook(mlx.win_ptr[mlx.cw], 3, 5, hook_keyrelease, (void*)&mngr);

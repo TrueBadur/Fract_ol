@@ -12,6 +12,24 @@
 
 #include "libft.h"
 
+t_vector	*ft_vecremove(t_vector *vec, size_t strt, size_t s)
+{
+	void *tmp;
+
+	if (!vec)
+		return (t_vector*)(NULL);
+	if (strt > vec->len)
+		return (vec);
+	if (strt + s > vec->len)
+		vec->len = strt;
+	else
+	{
+		ft_memmove(vec->data + strt, vec->data + strt + s, vec->len - strt - s);
+		vec->len -= s;
+	}
+	return (ft_vecshrink(vec, 0));
+}
+
 t_vector	*ft_vecshrink(t_vector *vec, unsigned int offset)
 {
 	void *tmp;

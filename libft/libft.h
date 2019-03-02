@@ -19,7 +19,7 @@
 # include "mtrx.h"
 # include <unistd.h>
 # include <string.h>
-# define IN_RANGE_II(a, b, c) (a <= b && b <= c)
+# define IN_RNGII(a, b, c) (a <= b && b <= c)
 # define IN_RANGE_CI(a, b, c) (a < b && b <= c)
 # define IN_RANGE_IC(a, b, c) (a <= b && b < c)
 # define IN_RANGE_CC(a, b, c) (a < b && b < c)
@@ -42,7 +42,7 @@ void				ft_putstr(char const *s);
 void				ft_putstr_fd(char const *s, int fd);
 void				ft_putendl(char const *s);
 void				ft_putendl_fd(char const *s, int fd);
-char				*ft_itoa(int n);
+char				*ft_itoa(long n);
 char				*ft_strncpy(char *dst, char const *src, size_t len);
 char				**ft_strsplit(char const *s, char c);
 int					ft_tolower(int c);
@@ -110,5 +110,5 @@ void				*ft_realloc(void *old_data, size_t prev_size,
 size_t				ft_strlen_u(const int *s, char f);
 char				ft_unilen(int u);
 int					ft_intlen(long int n);
-char				*ft_itoa_buf(int n, char *res);
+int					ft_itoa_buf(long n, char *res);
 #endif

@@ -19,12 +19,15 @@
 # include <math.h>
 # include <fcntl.h>
 # define  MOUSE_SCROL_SCALE 1.2
-#define PROGRAM_FILE "mndlbrt.cl"
-#define FRCTL_NUM 8
-#define FRCTL_PRV (FRCTL_NUM - 1)
+# define PROGRAM_FILE "mndlbrt.cl"
+# define SAVE_FILE "frctl_save.sv"
+# define FRCTL_NUM 8
+# define FRCTL_PRV (FRCTL_NUM - 1)
 # define SAVE_NUM 4
-# define COL_PR_NUM 3
-#define MAX_IMGS FRCTL_PRV + SAVE_NUM + COL_PR_NUM
+# define COL_PR_NUM 4
+# define L_COL_W(x) (x / (SAVE_NUM + COL_PR_NUM))
+# define R_COL_W(x) (x / (FRCTL_PRV))
+# define MAX_IMGS FRCTL_NUM + SAVE_NUM + COL_PR_NUM + 1
 # define CNTRL_D (1 << 1)
 # define SHIFT_D (1 << 0)
 # define CMND_D (1 << 2)
@@ -33,6 +36,7 @@
 # define CMND_RLS ~(1 << 2)
 # define IS_CNTRL_D (mngr->key_mask & CNTRL_D)
 # define IS_SHIFT_D (mngr->key_mask & SHIFT_D)
+# define IS_CMND_D (mngr->key_mask & CMND_D)
 # define INFO_H 30
 
 extern char *g_kernels[];
@@ -47,11 +51,12 @@ typedef struct	s_mlx
 
 typedef struct
 {
-	char		kern;
 	t_double3	strt;
 	t_float3	col;
 	size_t		iter;
 	int 		iter_mod;
+	t_double2	jc;
+	char		kern;
 }				t_frctl_o;
 
 typedef struct	s_img
@@ -86,15 +91,23 @@ typedef enum
 	MAIN_I,
 	PR_S,
 	COL_PR = PR_S + FRCTL_PRV,
-	COL_PR_END = COL_PR + COL_PR_NUM,
+	SAVE_PR = COL_PR + COL_PR_NUM,
+	SAVE_PR_END = SAVE_PR + SAVE_NUM,
 }				t_imgs;
+
+typedef enum
+{
+	ALL,
+	KERN,
+	COL,
+	NO,
+}				t_swap_modes;
 
 typedef struct
 {
 	t_ocl		ocl;
 	t_mlx		mlx;
 	t_int2		msmvcd[3];
-	t_double2	jc;
 	t_img		imgs[MAX_IMGS];
 	int			img_num;
 	int			cur_img;
@@ -102,14 +115,15 @@ typedef struct
 	char		key_mask;
 	char		info;
 	unsigned	res;
+	t_vector	*saves;
 }				t_manager;
 
 extern t_double3 	g_starts[];
 extern t_float3		g_cols[];
 
 void			init_main(t_manager *mngr, char kern);
-void			init_previews(t_manager *mngr, char s_kern);
-void			init_col_previews(t_manager *mngr, char s_kern);
+void			init_r_col(t_manager *mngr, char s_kern);
+void			init_l_col(t_manager *mngr);
 void			init(t_manager *mngr);
 void 			ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc);
 void 			ft_mlx_create_new_window(t_mlx *mlx, t_int2 res, char *name);
@@ -119,4 +133,5 @@ int				mouse_hook(int but, int x, int y, void *param);
 int				mouse_move_handle(int x, int y, void *param);
 int				mouse_release(int but, int x, int y, void *param);
 int				hook_keyrelease(int key, void *param);
+void			draw_empty_save(t_manager *mngr, t_img *img, int i, int new);
 #endif

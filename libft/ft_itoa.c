@@ -12,9 +12,9 @@
 
 #include "libft.h"
 
-char	*ft_itoa(int n)
+char	*ft_itoa(long n)
 {
-	int		nb;
+	long	nb;
 	int		len;
 	char	*ret;
 
@@ -41,9 +41,9 @@ char	*ft_itoa(int n)
 	return (ret);
 }
 
-char	*ft_itoa_buf(int n, char *res)
+int ft_itoa_buf(long n, char *res)
 {
-	int		nb;
+	long	nb;
 	int		len;
 	char	*rt;
 
@@ -66,5 +66,5 @@ char	*ft_itoa_buf(int n, char *res)
 	}
 	if (nb < 0)
 		res[0] = '-';
-	return (rt);
+	return (len);
 }
