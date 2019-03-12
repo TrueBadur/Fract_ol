@@ -56,7 +56,7 @@ int ft_redraw(void *param, int nimg)
 		return (1);
 	img->opts.iter = ft_get_iters(img->opts.strt, img->opts.iter_mod);
 	ft_ocl_make_img(img, &mngr->ocl, &img->opts.jc);
-	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], img->img_ptr,
+	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[MAIN_W], img->img_ptr,
 			img->pos.x, img->pos.y);
 	return (0);
 }
@@ -84,6 +84,36 @@ void restart(t_manager *mngr)
 	mngr->imgs[MAIN_I].opts.strt.z /= mngr->res;
 }
 
+int hook_keydwn_help (int key, void *param)
+{
+	t_mlx	*mlx;
+
+	mlx = &((t_manager*)param)->mlx;
+	if (key == 53)
+		mlx_destroy_window(mlx, mlx->win_ptr[HELP_W]);
+}
+
+int help_close(void *param)
+{
+	t_mlx	*mlx;
+
+	mlx = &((t_manager*)param)->mlx;
+	mlx_destroy_window(mlx, mlx->win_ptr[HELP_W]);
+}
+
+void help(t_manager *mngr)
+{
+	t_mlx	*mlx;
+
+	mlx = &mngr->mlx;
+	if (mlx->win_ptr[HELP_W])
+		return ;
+	mlx->win_ptr[HELP_W] = mlx_new_window(mlx->mlx_ptr, 400, 800, "Fract_ol: Help");
+	mlx_string_put(mlx->win_ptr, mlx->win_ptr[HELP_W],20, 20, 0x00ee649a, "Instructions:\nTo pan any image use LMB\nTo scale any image use mouse wheel\n");
+	mlx_hook(mlx->win_ptr[HELP_W],2, 5, hook_keydwn_help, (void*)mngr);
+	mlx_hook(mlx->win_ptr[HELP_W], 17, (1L << 3), help_close, (void*)mngr);
+}
+
 int		hook_keydwn(int key, void *param)
 {
 	t_manager	*mngr;
@@ -103,6 +133,8 @@ int		hook_keydwn(int key, void *param)
 	}
 	if (RESTART)
 		restart(mngr);
+	if (HELP)
+		help(mngr);
 	return (ft_redraw(param, mngr->cur_img));
 }
 

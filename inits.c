@@ -70,19 +70,22 @@ void	get_saves(t_manager *mngr, const char *fname)
 void	init(t_manager *mngr)
 {
 	unsigned	res;
+	t_mlx		*mlx;
 
 	res = mngr->res;
+	mlx = &mngr->mlx;
 	mngr->mlx.mlx_ptr = mlx_init();
 	mngr->mlx.wc = 1;
 	mngr->mlx.cw = 0;
-	mngr->mlx.res[mngr->mlx.cw] = (t_int2){res + L_COL_W(res) + R_COL_W(res),
+	mngr->mlx.res[MAIN_W] = (t_int2){res + L_COL_W(res) + R_COL_W(res),
 										   res};
 	mngr->img_num = 2;
 	mngr->cur_img = MAIN_I;
 	mngr->mouse_mask = 0;
 	mngr->key_mask = 0;
 	mngr->info = 0;
-	ft_mlx_create_new_window(&mngr->mlx, mngr->mlx.res[mngr->mlx.cw], "Fract_ol: main");
+	mngr->mlx.win_ptr[MAIN_W] = mlx_new_window(mlx->mlx_ptr,
+			mlx->res[mlx->cw].x, mlx->res[mlx->cw].y, "Fract_ol: main");
 	ft_ocl_dev_cont_prog(&mngr->ocl, PROGRAM_FILE);
 	ft_ocl_set_env(&mngr->ocl);
 	get_saves(mngr, SAVE_FILE);
@@ -110,7 +113,7 @@ void	init_f_i(t_manager *mngr, int nimg)
 	if (img->opts.kern < 0)
 		return ;
 	ft_ocl_make_img(img, &mngr->ocl, &img->opts.jc);
-	mlx_put_image_to_window(mngr->mlx.mlx_ptr, mngr->mlx.win_ptr[mngr->mlx.cw],
+	mlx_put_image_to_window(mngr->mlx.mlx_ptr, mngr->mlx.win_ptr[MAIN_W],
 							img->img_ptr, img->pos.x, img->pos.y);
 }
 
@@ -147,9 +150,9 @@ void	draw_empty_save(t_manager *mngr, t_img *img, int i, int new)
 	img->opts.kern = -1;
 	if (new)
 		init_f_i(mngr, i);
-	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr[mngr->mlx.cw],
+	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr[MAIN_W],
 							img->img_ptr, img->pos.x, img->pos.y);
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr[mngr->mlx.cw],
+	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr[MAIN_W],
 				   img->pos.x + 30, img->pos.y + img->res.y / 2,
 				   0x00aaaaaa, "Save slot");
 }

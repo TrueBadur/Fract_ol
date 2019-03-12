@@ -73,6 +73,11 @@ typedef struct	s_img
 	cl_mem 		buf;
 	t_frctl_o	opts;
 }				t_img;
+typedef enum
+{
+	MAIN_W,
+	HELP_W,
+}				t_windows;
 
 typedef enum
 {
@@ -127,7 +132,6 @@ void			init_r_col(t_manager *mngr, char s_kern);
 void			init_l_col(t_manager *mngr);
 void			init(t_manager *mngr);
 void 			ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc);
-void 			ft_mlx_create_new_window(t_mlx *mlx, t_int2 res, char *name);
 int 			frct_close(void *param);
 int				hook_keydwn(int key, void *param);
 int				mouse_hook(int but, int x, int y, void *param);

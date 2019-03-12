@@ -73,12 +73,12 @@ int			main(int ac, char **av)
 	init_r_col(&mngr, MNDLBRT);
 	init_l_col(&mngr);
 	mlx = mngr.mlx;
-	mlx_hook(mlx.win_ptr[mlx.cw], 2, 5, hook_keydwn, (void*)&mngr);
-	mlx_hook(mlx.win_ptr[mlx.cw], 3, 5, hook_keyrelease, (void*)&mngr);
-	mlx_hook(mlx.win_ptr[mlx.cw], 17, (1L << 3), frct_close, (void*)&mngr);
-	mlx_hook(mlx.win_ptr[mlx.cw], 4, 0, &mouse_hook, (void*)&mngr);
-	mlx_hook(mlx.win_ptr[mlx.cw], 6, 0, &mouse_move_handle, (void*)&mngr);
-	mlx_hook(mlx.win_ptr[mlx.cw], 5, 0, &mouse_release, (void*)&mngr);
+	mlx_hook(mlx.win_ptr[MAIN_W], 2, 5, hook_keydwn, (void*)&mngr);
+	mlx_hook(mlx.win_ptr[MAIN_W], 3, 5, hook_keyrelease, (void*)&mngr);
+	mlx_hook(mlx.win_ptr[MAIN_W], 17, (1L << 3), frct_close, (void*)&mngr);
+	mlx_hook(mlx.win_ptr[MAIN_W], 4, 0, &mouse_hook, (void*)&mngr);
+	mlx_hook(mlx.win_ptr[MAIN_W], 6, 0, &mouse_move_handle, (void*)&mngr);
+	mlx_hook(mlx.win_ptr[MAIN_W], 5, 0, &mouse_release, (void*)&mngr);
 	mlx_loop(mlx.mlx_ptr);
 	return (0);
 }
