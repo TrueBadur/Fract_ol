@@ -75,6 +75,15 @@ int		hook_keyrelease(int key, void *param)
 	return (0);
 }
 
+void restart(t_manager *mngr)
+{
+	char kern;
+
+	kern = mngr->imgs[MAIN_I].opts.kern;
+	mngr->imgs[MAIN_I].opts.strt = g_starts[kern > JULIA ? JULIA : kern];
+	mngr->imgs[MAIN_I].opts.strt.z /= mngr->res;
+}
+
 int		hook_keydwn(int key, void *param)
 {
 	t_manager	*mngr;
@@ -93,7 +102,7 @@ int		hook_keydwn(int key, void *param)
 		img->opts.iter_mod += IS_SHIFT_D ? (ITER_P) * 10 + (ITER_M) * -10 : 0;
 	}
 	if (RESTART)
-		//TODO
+		restart(mngr);
 	return (ft_redraw(param, mngr->cur_img));
 }
 
