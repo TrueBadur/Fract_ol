@@ -221,16 +221,24 @@ void	save_redraw(t_manager *mngr, int save)
 {
 	int i;
 	int j;
+	t_img *img;
 
 	if (save)
 		ft_vecpush(mngr->saves, &mngr->imgs[MAIN_I].opts, sizeof(t_frctl_o));
 	i = mngr->saves->len / sizeof(t_frctl_o);
-	((t_frctl_o*)mngr->saves->data)[i - 1].strt.z *= SAVE_NUM + COL_PR_NUM;
+	((t_frctl_o*)mngr->saves->data)[i - 1].strt.z *= save ? SAVE_NUM +
+			COL_PR_NUM : 1;
 	j = -1;
 	while (i-- && ++j < SAVE_NUM)
 	{
 		mngr->imgs[j + SAVE_PR].opts = ((t_frctl_o*)mngr->saves->data)[i];
 		ft_redraw(mngr, j + SAVE_PR);
+	}
+	while (++j < SAVE_NUM)
+	{
+		img = &mngr->imgs[j + SAVE_PR];
+		ft_bzero(img->data, img->res.x * img->res.y * 4);
+		draw_empty_save(mngr, img, 0, 0);
 	}
 }
 
@@ -283,7 +291,7 @@ int		rmb_handle(t_manager *mngr, int x, int y)
 		else if (mngr->cur_img < SAVE_PR_END && IS_CMND_D)
 		{
 			ft_vecremove(mngr->saves, mngr->saves->len - (mngr->cur_img -
-			SAVE_PR) * sizeof(t_frctl_o), sizeof(t_frctl_o));
+			SAVE_PR + 1) * sizeof(t_frctl_o), sizeof(t_frctl_o));
 			img->opts.kern = -1;
 			save_redraw(mngr, 0);
 		}
