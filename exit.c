@@ -22,8 +22,8 @@ void	write_savefile(t_vector *vec)
 		return ;
 	if ((fd = fopen(SAVE_FILE, "w")) != NULL)
 	{
-		i = vec->len / sizeof(t_frctl_o);
-		while (--i + 1)
+		i = -1;
+		while (++i < vec->len / sizeof(t_frctl_o))
 		{
 			if (((t_frctl_o*)vec->data)[i].kern < 0)
 				continue ;

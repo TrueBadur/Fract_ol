@@ -68,6 +68,7 @@ typedef struct	s_img
 	int			endian;
 	t_uint2		res;
 	t_uint2		pos;
+	int			num;
 
 	cl_mem 		buf;
 	t_frctl_o	opts;

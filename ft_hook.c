@@ -13,29 +13,6 @@
 #include "fractol.h"
 #include <stdio.h>
 
-void put_info(void *param)
-{
-	t_mlx mlx;
-	t_manager *mngr;
-	char 	t[5][50];
-	t_img	img;
-
-	mngr = (t_manager*)param;
-	img = mngr->imgs[mngr->cur_img];
-	mlx = mngr->mlx;
-	//TODO repalce with lib ft_printf
-	sprintf(t[0], "Number of iterations: %zu, %d", img.opts.iter,
-			img.opts.iter_mod);
-	sprintf(t[1], "Base color: (%f, %f, %f)", img.opts.col.x, img.opts.col.y,
-			img.opts.col.z);
-	sprintf(t[2], "Scale: 1:%.0f", (float)(1 / img.opts.strt.z));
-	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw],
-			mngr->imgs[INFO_I].img_ptr, 0, 0);
-	mlx_string_put(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], 10, 2, 0x000000ff, t[0]);
-	mlx_string_put(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], 380, 2, 0x000000ff, t[1]);
-	mlx_string_put(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], 850, 2, 0x000000ff, t[2]);
-}
-
 size_t ft_get_iters(t_double3 start, int iter_mod)
 {
 	size_t  ret;
@@ -71,8 +48,6 @@ int ft_redraw(void *param, int nimg)
 	t_mlx mlx;
 	t_manager *mngr;
 	t_img	*img;
-	size_t 	gs;
-	cl_int	err;
 
 	mngr = (t_manager*)param;
 	mlx = mngr->mlx;
@@ -83,8 +58,6 @@ int ft_redraw(void *param, int nimg)
 	ft_ocl_make_img(img, &mngr->ocl, &img->opts.jc);
 	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[mlx.cw], img->img_ptr,
 			img->pos.x, img->pos.y);
-	if (mngr->info)
-		put_info(param);
 	return (0);
 }
 
@@ -110,7 +83,6 @@ int		hook_keydwn(int key, void *param)
 	mngr = (t_manager*)param;
 	img = &mngr->imgs[mngr->cur_img];
 	mngr->key_mask |= (SHIFT * SHIFT_D) | (CNTRL * CNTRL_D) | (CMND * CMND_D);
-	printf("keymask = %d\n", mngr->key_mask);
 	if (key == 53)
 		frct_close(param);
 	if (ITER_P || ITER_M)
@@ -120,11 +92,6 @@ int		hook_keydwn(int key, void *param)
 		img->opts.iter_mod += IS_CNTRL_D ? (ITER_P) * 100 + (ITER_M) * -100 : 0;
 		img->opts.iter_mod += IS_SHIFT_D ? (ITER_P) * 10 + (ITER_M) * -10 : 0;
 	}
-	if (INFO && (mngr->info = ~(mngr->info)))
-		mngr->imgs[INFO_I].img_ptr = mlx_new_image(&mngr->mlx.mlx_ptr, mngr->res,
-												   INFO_H);
-	else if (INFO && !(mngr->info = ~(mngr->info)))
-		mlx_destroy_image(&mngr->mlx.mlx_ptr, mngr->imgs[INFO_I].img_ptr);
 	if (RESTART)
 		//TODO
 	return (ft_redraw(param, mngr->cur_img));
@@ -196,15 +163,6 @@ int		mouse_release(int but, int x, int y, void *param)
 	return (0);
 }
 
-void swap_color(t_img *small, t_img *main)
-{
-	t_float3 tmp;
-
-	tmp = small->opts.col;
-	small->opts.col = main->opts.col;
-	main->opts.col = tmp;
-}
-
 void swap_img(t_img *small, t_img *main, int swp_col)
 {
 	t_frctl_o	o_tmp;
@@ -218,7 +176,8 @@ void swap_img(t_img *small, t_img *main, int swp_col)
 		small->opts.col = (t_float3){0, 0, 0};
 	}
 	small->opts.strt.z *= FRCTL_PRV;
-	main->opts.strt.z /= FRCTL_PRV;
+	main->opts.strt.z /= small->num >= COL_PR ? SAVE_NUM + COL_PR_NUM
+			: FRCTL_PRV;
 }
 
 void	scroll(t_img *img, int but, int x, int y)
@@ -246,7 +205,9 @@ void	set_img(t_manager *mngr, t_int2 start, int mode, t_img *donor)
 	while (start.x < start.y)
 	{
 		if (mode == ALL)
+		{
 			mngr->imgs[start.x].opts = donor->opts;
+		}
 		else if (mode == KERN)
 			mngr->imgs[start.x].opts.kern = donor->opts.kern;
 		else if (mode == COL)
@@ -284,7 +245,10 @@ int		load_img_pr(t_manager *mngr)
 	if (mngr->saves->len == 0)
 		return (1);
 	if (main->opts.kern == load->opts.kern)
+	{
 		set_img(mngr, (t_int2){MAIN_I, MAIN_I + 1}, ALL, load);
+		main->opts.strt.z /= SAVE_NUM + COL_PR_NUM;
+	}
 	else
 	{
 		i = MAIN_I;
@@ -293,7 +257,7 @@ int		load_img_pr(t_manager *mngr)
 			{
 				swap_img(&mngr->imgs[i], &mngr->imgs[MAIN_I], 0);
 				set_img(mngr, (t_int2){MAIN_I, MAIN_I + 1}, ALL, load);
-				main->opts.strt.z /= SAVE_NUM;
+				main->opts.strt.z /= SAVE_NUM + COL_PR_NUM;
 				set_img(mngr, (t_int2){COL_PR, SAVE_PR}, KERN, &mngr->imgs[MAIN_I]);
 				ft_redraw(mngr, i);
 			}

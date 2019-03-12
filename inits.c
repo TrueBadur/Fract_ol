@@ -43,22 +43,20 @@ void	get_saves(t_manager *mngr, const char *fname)
 {
 	FILE	*fd;
 	int		i;
-	size_t	rr;
 	t_frctl_o *tmp;
 
 	if ((fd = fopen(fname, "r")) > 0)
 	{
-		rr = sizeof(t_frctl_o);
-		mngr->saves = ft_vecinit(rr);
-		tmp = malloc(rr);
+		mngr->saves = ft_vecinit(sizeof(t_frctl_o));
+		tmp = malloc(sizeof(t_frctl_o));
 		i = -1;
 		while (1)
 		{
 			i++;
-			fread(tmp, rr, 1, fd);
+			fread(tmp, sizeof(t_frctl_o), 1, fd);
 			if (feof(fd))
 				break ;
-			ft_vecpush(mngr->saves, tmp, rr);
+			ft_vecpush(mngr->saves, tmp, sizeof(t_frctl_o));
 		}
 		fclose(fd);
 		if (i == 0)
@@ -75,10 +73,8 @@ void	init(t_manager *mngr)
 
 	res = mngr->res;
 	mngr->mlx.mlx_ptr = mlx_init();
-	mngr->mlx.wc = 0;
+	mngr->mlx.wc = 1;
 	mngr->mlx.cw = 0;
-	//mngr->mlx.res[mngr->mlx.cw] = (t_int2){res + res / FRCTL_PRV +
-	//									   res / SAVE_NUM + res / COL_PR_NUM, res};
 	mngr->mlx.res[mngr->mlx.cw] = (t_int2){res + L_COL_W(res) + R_COL_W(res),
 										   res};
 	mngr->img_num = 2;
@@ -99,10 +95,11 @@ void	init_f_i(t_manager *mngr, int nimg)
 	t_img	*img;
 
 	img = &mngr->imgs[nimg];
+	img->num = nimg;
 	img->img_ptr = mlx_new_image(mngr->mlx.mlx_ptr, img->res.x, img->res.y);
 	img->data = mlx_get_data_addr(img->img_ptr, &img->bpp, &img->size_line,
 								  &img->endian);
-	if (nimg > MAIN_I)
+	if (nimg > MAIN_I && nimg < SAVE_PR)
 		img->opts.strt.z *= nimg >= COL_PR ? SAVE_NUM + COL_PR_NUM : FRCTL_PRV;
 	gs = (size_t)img->res.x * img->res.y;
 	img->buf = clCreateBuffer(mngr->ocl.context, CL_MEM_READ_WRITE,
@@ -112,7 +109,7 @@ void	init_f_i(t_manager *mngr, int nimg)
 	mngr->img_num = nimg + 1;
 	if (img->opts.kern < 0)
 		return ;
-	ft_ocl_make_img(img, &mngr->ocl, &(t_double2){0,0});
+	ft_ocl_make_img(img, &mngr->ocl, &img->opts.jc);
 	mlx_put_image_to_window(mngr->mlx.mlx_ptr, mngr->mlx.win_ptr[mngr->mlx.cw],
 							img->img_ptr, img->pos.x, img->pos.y);
 }
@@ -170,7 +167,7 @@ void	init_save(t_manager *mngr, int i)
 		draw_empty_save(mngr, img, i, 1);
 	else
 	{
-		img->opts = ((t_frctl_o*)v->data)[s - 1 - i + SAVE_PR];
+		img->opts = ((t_frctl_o*)v->data)[s - (i - SAVE_PR) - 1];
 		init_f_i(mngr, i);
 	}
 }
