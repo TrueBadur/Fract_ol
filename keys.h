@@ -22,6 +22,7 @@
 # define INFO (key == 34)
 # define RESTART (key == 15)
 # define HELP (key == 4)
+# define SAVE (key == 1)
 # define RMB_HOLD (mngr->mouse_mask & (1 << 1))
 # define LMB_HOLD (mngr->mouse_mask & (1 << 0))
 #endif

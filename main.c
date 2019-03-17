@@ -69,6 +69,7 @@ int			main(int ac, char **av)
 
 	mngr.res = 1200; //TODO get from arguments;
 	init(&mngr);
+	help(&mngr);
 	init_main(&mngr, MNDLBRT);
 	init_r_col(&mngr, MNDLBRT);
 	init_l_col(&mngr);

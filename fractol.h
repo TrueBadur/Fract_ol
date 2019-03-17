@@ -25,9 +25,10 @@
 # define FRCTL_PRV (FRCTL_NUM - 1)
 # define SAVE_NUM 4
 # define COL_PR_NUM 4
+# define MAX_SAVEW 16
 # define L_COL_W(x) (x / (SAVE_NUM + COL_PR_NUM))
 # define R_COL_W(x) (x / (FRCTL_PRV))
-# define MAX_IMGS FRCTL_NUM + SAVE_NUM + COL_PR_NUM + 1
+# define MAX_IMGS FRCTL_NUM + SAVE_NUM + COL_PR_NUM + MAX_SAVEW + 1
 # define CNTRL_D (1 << 1)
 # define SHIFT_D (1 << 0)
 # define CMND_D (1 << 2)
@@ -77,6 +78,7 @@ typedef enum
 {
 	MAIN_W,
 	HELP_W,
+	SAVE_W,
 }				t_windows;
 
 typedef enum
@@ -98,7 +100,9 @@ typedef enum
 	PR_S,
 	COL_PR = PR_S + FRCTL_PRV,
 	SAVE_PR = COL_PR + COL_PR_NUM,
-	SAVE_PR_END = SAVE_PR + SAVE_NUM,
+	SAVE_PR_IN_W = SAVE_PR + SAVE_NUM,
+	SAVEW_END = SAVE_PR_IN_W + MAX_SAVEW,
+	END_I = SAVEW_END
 }				t_imgs;
 
 typedef enum
@@ -127,10 +131,20 @@ typedef struct
 extern t_double3 	g_starts[];
 extern t_float3		g_cols[];
 
+void			help(t_manager *mngr);
+void			draw_saves(t_manager *mngr, int init, int d_off);
+int				hook_keyrelease(int key, void *param);
+void			save_redraw(t_manager *mngr, int save);
+int				ft_redraw(void *param, int nimg);
+int				load_img_pr(t_manager *mngr, int imgtl);
+void			swap_img(t_img *small, t_img *main, int swp_col);
+void			set_img(t_manager *mngr, t_int2 start, int mode, t_img *donor);
+void 			open_saves(t_manager *mngr);
 void			init_main(t_manager *mngr, char kern);
 void			init_r_col(t_manager *mngr, char s_kern);
 void			init_l_col(t_manager *mngr);
 void			init(t_manager *mngr);
+void			init_f_i(t_manager *mngr, int nimg, t_img *img, int win);
 void 			ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc);
 int 			frct_close(void *param);
 int				hook_keydwn(int key, void *param);

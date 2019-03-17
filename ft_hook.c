@@ -45,18 +45,20 @@ int get_win(t_manager *mngr, int x, int y)
 
 int ft_redraw(void *param, int nimg)
 {
-	t_mlx mlx;
-	t_manager *mngr;
-	t_img	*img;
+	t_mlx		mlx;
+	t_manager	*mngr;
+	t_img		*img;
+	int			win;
 
 	mngr = (t_manager*)param;
 	mlx = mngr->mlx;
 	img = &mngr->imgs[nimg];
+	win = nimg >= SAVE_PR_IN_W ? SAVE_W : MAIN_W;
 	if (img->opts.kern < 0)
 		return (1);
 	img->opts.iter = ft_get_iters(img->opts.strt, img->opts.iter_mod);
 	ft_ocl_make_img(img, &mngr->ocl, &img->opts.jc);
-	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[MAIN_W], img->img_ptr,
+	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win_ptr[win], img->img_ptr,
 			img->pos.x, img->pos.y);
 	return (0);
 }
@@ -82,36 +84,7 @@ void restart(t_manager *mngr)
 	kern = mngr->imgs[MAIN_I].opts.kern;
 	mngr->imgs[MAIN_I].opts.strt = g_starts[kern > JULIA ? JULIA : kern];
 	mngr->imgs[MAIN_I].opts.strt.z /= mngr->res;
-}
-
-int hook_keydwn_help (int key, void *param)
-{
-	t_mlx	*mlx;
-
-	mlx = &((t_manager*)param)->mlx;
-	if (key == 53)
-		mlx_destroy_window(mlx, mlx->win_ptr[HELP_W]);
-}
-
-int help_close(void *param)
-{
-	t_mlx	*mlx;
-
-	mlx = &((t_manager*)param)->mlx;
-	mlx_destroy_window(mlx, mlx->win_ptr[HELP_W]);
-}
-
-void help(t_manager *mngr)
-{
-	t_mlx	*mlx;
-
-	mlx = &mngr->mlx;
-	if (mlx->win_ptr[HELP_W])
-		return ;
-	mlx->win_ptr[HELP_W] = mlx_new_window(mlx->mlx_ptr, 400, 800, "Fract_ol: Help");
-	mlx_string_put(mlx->win_ptr, mlx->win_ptr[HELP_W],20, 20, 0x00ee649a, "Instructions:\nTo pan any image use LMB\nTo scale any image use mouse wheel\n");
-	mlx_hook(mlx->win_ptr[HELP_W],2, 5, hook_keydwn_help, (void*)mngr);
-	mlx_hook(mlx->win_ptr[HELP_W], 17, (1L << 3), help_close, (void*)mngr);
+	ft_redraw(mngr, MAIN_I);
 }
 
 int		hook_keydwn(int key, void *param)
@@ -135,6 +108,8 @@ int		hook_keydwn(int key, void *param)
 		restart(mngr);
 	if (HELP)
 		help(mngr);
+	if (SAVE)
+		open_saves(mngr);
 	return (ft_redraw(param, mngr->cur_img));
 }
 
@@ -243,7 +218,7 @@ void	scroll(t_img *img, int but, int x, int y)
 
 void	set_img(t_manager *mngr, t_int2 start, int mode, t_img *donor)
 {
-	while (start.x < start.y)
+	while (start.x <= start.y)
 	{
 		if (mode == ALL)
 		{
@@ -281,38 +256,11 @@ void	save_redraw(t_manager *mngr, int save)
 		ft_bzero(img->data, img->res.x * img->res.y * 4);
 		draw_empty_save(mngr, img, 0, 0);
 	}
+	if (mngr->mlx.win_ptr[SAVE_W])
+		draw_saves(mngr, 0, 0);
 }
 
-int		load_img_pr(t_manager *mngr)
-{
-	t_img	*main;
-	t_img	*load;
-	int		i;
 
-	main = &mngr->imgs[MAIN_I];
-	load = &mngr->imgs[mngr->cur_img];
-	if (mngr->saves->len == 0)
-		return (1);
-	if (main->opts.kern == load->opts.kern)
-	{
-		set_img(mngr, (t_int2){MAIN_I, MAIN_I + 1}, ALL, load);
-		main->opts.strt.z /= SAVE_NUM + COL_PR_NUM;
-	}
-	else
-	{
-		i = MAIN_I;
-		while (++i < COL_PR)
-			if (mngr->imgs[i].opts.kern == load->opts.kern)
-			{
-				swap_img(&mngr->imgs[i], &mngr->imgs[MAIN_I], 0);
-				set_img(mngr, (t_int2){MAIN_I, MAIN_I + 1}, ALL, load);
-				main->opts.strt.z /= SAVE_NUM + COL_PR_NUM;
-				set_img(mngr, (t_int2){COL_PR, SAVE_PR}, KERN, &mngr->imgs[MAIN_I]);
-				ft_redraw(mngr, i);
-			}
-	}
-	return (0);
-}
 
 int		rmb_handle(t_manager *mngr, int x, int y)
 {
@@ -325,18 +273,18 @@ int		rmb_handle(t_manager *mngr, int x, int y)
 		if (mngr->cur_img < COL_PR)
 		{
 			swap_img(img, &mngr->imgs[MAIN_I], 0);
-			set_img(mngr, (t_int2){COL_PR, SAVE_PR}, KERN, &mngr->imgs[MAIN_I]);
+			set_img(mngr, (t_int2){COL_PR, SAVE_PR - 1}, KERN, &mngr->imgs[MAIN_I]);
 		}
 		else if (mngr->cur_img < SAVE_PR)
-			set_img(mngr, (t_int2){MAIN_I, MAIN_I + 1}, COL, img);
-		else if (mngr->cur_img < SAVE_PR_END && IS_CMND_D)
+			set_img(mngr, (t_int2){MAIN_I, MAIN_I}, COL, img);
+		else if (mngr->cur_img < SAVE_PR_IN_W && IS_CMND_D)
 		{
 			ft_vecremove(mngr->saves, mngr->saves->len - (mngr->cur_img -
 			SAVE_PR + 1) * sizeof(t_frctl_o), sizeof(t_frctl_o));
 			img->opts.kern = -1;
 			save_redraw(mngr, 0);
 		}
-		else if (load_img_pr(mngr))
+		else if (load_img_pr(mngr, mngr->cur_img))
 			return (1);
 		ft_redraw(mngr, MAIN_I);
 	}

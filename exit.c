@@ -45,6 +45,7 @@ void total_free(void *param)
 	while(g_kernels[++i])
 		clReleaseKernel(mngr->ocl.kern[i]);
 	free(((t_ocl**)param)[0]->kern);
+	//TODO
 }
 
 int frct_close(void *param)

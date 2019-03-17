@@ -75,10 +75,11 @@ void	init(t_manager *mngr)
 	res = mngr->res;
 	mlx = &mngr->mlx;
 	mngr->mlx.mlx_ptr = mlx_init();
+	ft_bzero(mngr->mlx.win_ptr, sizeof(void*) * 10);
+	ft_bzero(mngr->imgs, sizeof(t_img) * END_I);
 	mngr->mlx.wc = 1;
 	mngr->mlx.cw = 0;
-	mngr->mlx.res[MAIN_W] = (t_int2){res + L_COL_W(res) + R_COL_W(res),
-										   res};
+	mngr->mlx.res[MAIN_W] = (t_int2){res + L_COL_W(res) + R_COL_W(res), res};
 	mngr->img_num = 2;
 	mngr->cur_img = MAIN_I;
 	mngr->mouse_mask = 0;
@@ -91,14 +92,14 @@ void	init(t_manager *mngr)
 	get_saves(mngr, SAVE_FILE);
 }
 
-void	init_f_i(t_manager *mngr, int nimg)
+void	init_f_i(t_manager *mngr, int nimg, t_img *img, int win)
 {
 	cl_int	err;
 	size_t	gs;
-	t_img	*img;
 
-	img = &mngr->imgs[nimg];
-	img->num = nimg;
+	if (!img)
+		img = &mngr->imgs[nimg];
+	img->num = nimg >= 0 ? nimg : img->num;
 	img->img_ptr = mlx_new_image(mngr->mlx.mlx_ptr, img->res.x, img->res.y);
 	img->data = mlx_get_data_addr(img->img_ptr, &img->bpp, &img->size_line,
 								  &img->endian);
@@ -109,11 +110,11 @@ void	init_f_i(t_manager *mngr, int nimg)
 							  sizeof(int) * gs, NULL, &err);
 	if (err < 0)
 		ft_ocl_err_handler(FT_OCL_BUFFER_ERR);
-	mngr->img_num = nimg + 1;
+	mngr->img_num = nimg > 0 ? nimg + 1 : mngr->img_num;
 	if (img->opts.kern < 0)
 		return ;
 	ft_ocl_make_img(img, &mngr->ocl, &img->opts.jc);
-	mlx_put_image_to_window(mngr->mlx.mlx_ptr, mngr->mlx.win_ptr[MAIN_W],
+	mlx_put_image_to_window(mngr->mlx.mlx_ptr, mngr->mlx.win_ptr[win],
 							img->img_ptr, img->pos.x, img->pos.y);
 }
 
@@ -138,7 +139,7 @@ void	init_r_col(t_manager *mngr, char s_kern)
 		mngr->imgs[i].res = pr_res;
 		mngr->imgs[i].opts.iter_mod = 0;
 		mngr->imgs[i].opts.col = g_cols[0];
-		init_f_i(mngr, i++);
+		init_f_i(mngr, i++, NULL, MAIN_W);
 	}
 }
 
@@ -149,7 +150,7 @@ void	draw_empty_save(t_manager *mngr, t_img *img, int i, int new)
 	mlx = &mngr->mlx;
 	img->opts.kern = -1;
 	if (new)
-		init_f_i(mngr, i);
+		init_f_i(mngr, i, NULL, MAIN_W);
 	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr[MAIN_W],
 							img->img_ptr, img->pos.x, img->pos.y);
 	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr[MAIN_W],
@@ -171,7 +172,7 @@ void	init_save(t_manager *mngr, int i)
 	else
 	{
 		img->opts = ((t_frctl_o*)v->data)[s - (i - SAVE_PR) - 1];
-		init_f_i(mngr, i);
+		init_f_i(mngr, i, NULL, MAIN_W);
 	}
 }
 
@@ -183,7 +184,7 @@ void	init_l_col(t_manager *mngr)
 
 	pr_res = (t_uint2){L_COL_W(mngr->res), L_COL_W(mngr->res)};
 	i = COL_PR;
-	while (i < SAVE_PR_END)
+	while (i < SAVE_PR_IN_W)
 	{
 		mngr->imgs[i].res = pr_res;
 		mngr->imgs[i].pos = (t_uint2){0, (i - COL_PR) * pr_res.x};
@@ -200,7 +201,7 @@ void	init_l_col(t_manager *mngr)
 		mngr->imgs[i].opts.strt.z /= mngr->res;
 		mngr->imgs[i].opts.iter_mod = 0;
 		mngr->imgs[i].opts.col = g_cols[i - COL_PR + 1];
-		init_f_i(mngr, i++);
+		init_f_i(mngr, i++, NULL, MAIN_W);
 	}
 }
 
@@ -214,5 +215,5 @@ void	init_main(t_manager *mngr, char kern)
 	mngr->imgs[MAIN_I].opts.strt.z /= mngr->res;
 	mngr->imgs[MAIN_I].opts.iter_mod = 0;
 	mngr->imgs[MAIN_I].opts.col = g_cols[1];
-	init_f_i(mngr, MAIN_I);
+	init_f_i(mngr, MAIN_I, NULL, MAIN_W);
 }
