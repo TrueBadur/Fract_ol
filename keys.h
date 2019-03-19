@@ -10,10 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
 #ifndef KEYS_H
-#define KEYS_H
+# define KEYS_H
 # define ITER_P key == 24
 # define ITER_M key == 27
 # define SHIFT (key == 257)

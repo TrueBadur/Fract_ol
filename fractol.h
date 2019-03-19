@@ -10,15 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FDF_H
-# define FDF_H
+#ifndef FRACTOL_H
+# define FRACTOL_H
 # include "libft/libft.h"
 # include "libft/ft_ocl/ocl.h"
 # include "keys.h"
 # include <mlx.h>
 # include <math.h>
 # include <fcntl.h>
-# define  MOUSE_SCROL_SCALE 1.2
+# define MOUSE_SCROL_SCALE 1.2
 # define PROGRAM_FILE "mndlbrt.cl"
 # define SAVE_FILE "frctl_save.sv"
 # define FRCTL_NUM 8
@@ -26,9 +26,9 @@
 # define SAVE_NUM 4
 # define COL_PR_NUM 4
 # define MAX_SAVEW 16
-# define L_COL_W(x) (x / (SAVE_NUM + COL_PR_NUM))
-# define R_COL_W(x) (x / (FRCTL_PRV))
-# define MAX_IMGS FRCTL_NUM + SAVE_NUM + COL_PR_NUM + MAX_SAVEW + 1
+# define L_COL_W(x) ((x) / (SAVE_NUM + COL_PR_NUM))
+# define R_COL_W(x) ((x) / (FRCTL_PRV))
+# define MAX_IMGS (FRCTL_NUM + SAVE_NUM + COL_PR_NUM + MAX_SAVEW + 1)
 # define CNTRL_D (1 << 1)
 # define SHIFT_D (1 << 0)
 # define CMND_D (1 << 2)
@@ -50,12 +50,12 @@ typedef struct	s_mlx
 	t_int2		res[10];
 }				t_mlx;
 
-typedef struct
+typedef struct	s_frctl_o
 {
 	t_double3	strt;
 	t_float3	col;
 	size_t		iter;
-	int 		iter_mod;
+	int			iter_mod;
 	t_double2	jc;
 	char		kern;
 }				t_frctl_o;
@@ -71,17 +71,17 @@ typedef struct	s_img
 	t_int2		pos;
 	int			num;
 
-	cl_mem 		buf;
+	cl_mem		buf;
 	t_frctl_o	opts;
 }				t_img;
-typedef enum
+typedef enum	e_windows
 {
 	MAIN_W,
 	HELP_W,
 	SAVE_W,
 }				t_windows;
 
-typedef enum
+typedef enum	e_frctls
 {
 	MNDLBRT,
 	BRNNG_SHP,
@@ -93,7 +93,7 @@ typedef enum
 	JULIA_FABSFABS,
 }				t_frctls;
 
-typedef enum
+typedef enum	e_imgs
 {
 	INFO_I,
 	MAIN_I,
@@ -105,7 +105,7 @@ typedef enum
 	END_I = SAVEW_END
 }				t_imgs;
 
-typedef enum
+typedef enum	e_swap_modes
 {
 	ALL,
 	KERN,
@@ -114,7 +114,7 @@ typedef enum
 	NO,
 }				t_swap_modes;
 
-typedef struct
+typedef struct	s_manager
 {
 	t_ocl		ocl;
 	t_mlx		mlx;
@@ -127,10 +127,10 @@ typedef struct
 	char		info;
 	unsigned	res;
 	t_vector	*saves;
-	int 		sv_off;
+	int			sv_off;
 }				t_manager;
 
-extern t_double3 	g_starts[];
+extern t_double3	g_starts[];
 extern t_float3		g_cols[];
 
 void			help(t_manager *mngr);
@@ -141,19 +141,18 @@ int				ft_redraw(void *param, int nimg);
 int				load_img_pr(t_manager *mngr, int imgtl);
 void			swap_img(t_img *small, t_img *main, int swp_col);
 void			set_img(t_manager *mngr, t_int2 start, int mode, t_img *donor);
-void 			open_saves(t_manager *mngr);
+void			open_saves(t_manager *mngr);
 void			init_main(t_manager *mngr, char kern);
 void			init_r_col(t_manager *mngr, char s_kern);
 void			init_l_col(t_manager *mngr);
 void			init(t_manager *mngr);
 void			init_img(t_manager *mngr, int nimg, t_img *img, int win);
-void 			ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc);
-int 			frct_close(void *param);
+void			ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc);
+int				frct_close(void *param);
 int				hook_keydwn(int key, void *param);
 int				mouse_hook(int but, int x, int y, void *param);
 int				mouse_move_handle(int x, int y, void *param);
 int				mouse_release(int but, int x, int y, void *param);
-int				hook_keyrelease(int key, void *param);
 void			draw_empty_save(t_manager *mngr, t_img *img, int i, int new);
 void			write_savefile(t_vector *vec, char del);
 #endif
