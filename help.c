@@ -12,7 +12,7 @@
 
 #include "fractol.h"
 
-int hook_keydwn_help (int key, void *param)
+int		hook_keydwn_help(int key, void *param)
 {
 	t_mlx	*mlx;
 
@@ -25,7 +25,7 @@ int hook_keydwn_help (int key, void *param)
 	return (0);
 }
 
-int help_close(void *param)
+int		help_close(void *param)
 {
 	t_mlx	*mlx;
 
@@ -35,7 +35,7 @@ int help_close(void *param)
 	return (0);
 }
 
-void wrtoh(t_mlx *mlx, int offset, int col, char *str)
+void	wrtoh(t_mlx *mlx, int offset, int col, char *str)
 {
 	static int	n = 0;
 
@@ -45,19 +45,12 @@ void wrtoh(t_mlx *mlx, int offset, int col, char *str)
 		return ;
 	}
 	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr[HELP_W], 15 + offset, 20 * n,
-				   col, str);
+			col, str);
 	n++;
 }
 
-void help(t_manager *mngr)
+void	help_put_strings(t_mlx *mlx)
 {
-	t_mlx	*mlx;
-
-	mlx = &mngr->mlx;
-	if (mlx->win_ptr[HELP_W])
-		return ;
-	mlx->win_ptr[HELP_W] = mlx_new_window(mlx->mlx_ptr, 700, 1200,
-										  "Fract_ol: Help");
 	wrtoh(mlx, 0, 0, NULL);
 	wrtoh(mlx, 0, 0x00ee649a, "Instructions:");
 	wrtoh(mlx, 10, 0x00ee649a, "To pan any image use LMB");
@@ -65,15 +58,31 @@ void help(t_manager *mngr)
 	wrtoh(mlx, 10, 0x00ee649a, "Hold and move RMB to change color in MAIN");
 	wrtoh(mlx, 35, 0x00ee649a, "+Shift for additional changes");
 	wrtoh(mlx, 10, 0x00ee649a,
-		  "Hold and move MMB for changing Julia-like fractals");
+		"Hold and move MMB for changing Julia-like fractals");
 	wrtoh(mlx, 10, 0x00ee649a, "RMB on preview to swap it with main image");
 	wrtoh(mlx, 10, 0x00ee649a,
-		  "RMB on save or color preview to load it in main image");
+		"RMB on save or color preview to load it in main image");
 	wrtoh(mlx, 10, 0x00ee649a,
-		  "CNTRL + RMB on MAIN image to save current state");
+		"CNTRL + RMB on MAIN image to save current state");
 	wrtoh(mlx, 10, 0x00ee649a, "CMND + RMB on SAVE image to delete it");
+	wrtoh(mlx, 10, 0x00ee649a, "+/- to increase/decrease number of iterations");
+	wrtoh(mlx, 10, 0x00ee649a, "r to return to fractal's base position");
+	wrtoh(mlx, 0, 0x00ee649a, "s to open window with all saves");
+	wrtoh(mlx, 0, 0x00ee649a, "h to open this window");
+}
+
+void	help(t_manager *mngr)
+{
+	t_mlx	*mlx;
+
+	mlx = &mngr->mlx;
+	if (mlx->win_ptr[HELP_W])
+		return ;
+	mlx->win_ptr[HELP_W] = mlx_new_window(mlx->mlx_ptr, 700, 1200,
+										"Fract_ol: Help");
+	help_put_strings(mlx);
 	if (!(mngr->imgs[MAIN_I].img_ptr))
 		wrtoh(mlx, 40, 0x0000ff00, "Press ESC to continue");
-	mlx_hook(mlx->win_ptr[HELP_W],2, 5, hook_keydwn_help, (void*)mngr);
+	mlx_hook(mlx->win_ptr[HELP_W], 2, 5, hook_keydwn_help, (void*)mngr);
 	mlx_hook(mlx->win_ptr[HELP_W], 17, (1L << 3), help_close, (void*)mngr);
 }

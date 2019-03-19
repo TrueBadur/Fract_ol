@@ -133,7 +133,11 @@ typedef struct	s_manager
 extern t_double3	g_starts[];
 extern t_float3		g_cols[];
 
+void			ft_ocl_set_env(t_ocl *ocl);
 void			help(t_manager *mngr);
+size_t			ft_get_iters(t_double3 start, int iter_mod);
+int				get_win(t_manager *mngr, int x, int y);
+void			restart(t_manager *mngr);
 void			draw_saves(t_manager *mngr, int d_off);
 int				hook_keyrelease(int key, void *param);
 void			save_redraw(t_manager *mngr, int save);
@@ -149,10 +153,14 @@ void			init(t_manager *mngr);
 void			init_img(t_manager *mngr, int nimg, t_img *img, int win);
 void			ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc);
 int				frct_close(void *param);
+void			get_saves(t_manager *mngr, const char *fname);
+void			init_save(t_manager *mngr, int i);
 int				hook_keydwn(int key, void *param);
 int				mouse_hook(int but, int x, int y, void *param);
 int				mouse_move_handle(int x, int y, void *param);
 int				mouse_release(int but, int x, int y, void *param);
 void			draw_empty_save(t_manager *mngr, t_img *img, int i, int new);
 void			write_savefile(t_vector *vec, char del);
+void			rmb_hold_hndl(t_manager *mngr, int x, int y);
+void			lmb_hold_hndl(t_manager *mngr, int x, int y);
 #endif
