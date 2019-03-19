@@ -22,6 +22,7 @@ int hook_keydwn_help (int key, void *param)
 		mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr[HELP_W]);
 		mlx->win_ptr[HELP_W] = NULL;
 	}
+	return (0);
 }
 
 int help_close(void *param)
@@ -31,11 +32,12 @@ int help_close(void *param)
 	mlx = &((t_manager*)param)->mlx;
 	mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr[HELP_W]);
 	mlx->win_ptr[HELP_W] = NULL;
+	return (0);
 }
 
 void wrtoh(t_mlx *mlx, int offset, int col, char *str)
 {
-	static n = 0;
+	static int	n = 0;
 
 	if (!str)
 	{

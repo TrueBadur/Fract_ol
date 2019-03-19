@@ -14,7 +14,7 @@ NAME = fract_ol
 SRC = $(wildcard *.c) 
 OBJ=$(SRC:.c=.o)
 CC = clang
-#CFLAGS = -Wall -Wextra -Werror //todo restore flags
+CFLAGS = -Wall -Wextra -Werror
 LIB = libft/libft.a
 LIBOCL = libft/libocl.a
 LIBDIR = libft/

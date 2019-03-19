@@ -6,38 +6,22 @@
 /*   By: bparker <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/23 11:17:51 by bparker           #+#    #+#             */
-/*   Updated: 2019/01/14 20:33:02 by ehugh-be         ###   ########.fr       */
+/*   Updated: 2019/03/19 15:01:59 by ehugh-be         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "fractol.h"
 
-char *g_kernels[] = {"mndlbrt",
-					 "brnng_shp",
-					 "tantan",
-					 "fabs_tan",
-					 "julia",
-					 "julia_tantan",
-					 "julia_fabstan",
-					 "julia_fabsfabs",
-					 NULL};
+char *g_kernels[] = {"mndlbrt", "brnng_shp", "tantan", "fabs_tan", "julia",
+	"julia_tantan", "julia_fabstan", "julia_fabsfabs", NULL};
 
-void ft_mlx_create_new_window(t_mlx *mlx, t_int2 res, char *name)
+void	ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc)
 {
-	mlx->cw += mlx->wc ? 1 : 0;
-	mlx->res[mlx->cw] = res;
-	mlx->win_ptr[mlx->cw] = mlx_new_window(mlx->mlx_ptr, mlx->res[mlx->cw].x,
-										 mlx->res[mlx->cw].y, name);
-	mlx->wc++;
-}
-
-void ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc)
-{
-	size_t ls;
-	cl_int e;
-	size_t gs;
-	short kern;
+	size_t	ls;
+	cl_int	e;
+	size_t	gs;
+	short	kern;
 
 	ls = (img->size_line < 0) ? 0 : (size_t)(img->size_line / 4);
 	gs = img->res.x * img->res.y;
@@ -59,19 +43,62 @@ void ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc)
 		ft_ocl_err_handler(FT_OCL_READ_BUF_ERR);
 }
 
-int			main(int ac, char **av)
+void	base_help(void)
+{
+	int tmp;
+
+	write(1, "Usage: ./fractol [resolution of main image] "
+				"[name of fractal for main image]\n", 77);
+	write(1, "List of available fractals:\n", 28);
+	tmp = -1;
+	while (g_kernels[++tmp])
+	{
+		if (tmp > 0)
+			write(1, ", ", 2);
+		write(1, g_kernels[tmp], ft_strlen(g_kernels[tmp]));
+	}
+	write(1, "\n", 1);
+	exit(0);
+}
+
+int		parse_args(t_manager *mngr, int ac, char **av)
+{
+	int tmp;
+	int i;
+
+	if (ac > 1)
+	{
+		i = 1;
+		if (ac == 2 && !ft_strcmp(av[1], "-h"))
+			base_help();
+		if ((tmp = ft_atoi(av[1])) > 10 && tmp < 5000 && i++)
+			mngr->res = (unsigned)tmp;
+		else
+			mngr->res = 1300;
+		if (i < ac)
+		{
+			tmp = -1;
+			while (g_kernels[++tmp])
+				if (!ft_strcmp(av[i], g_kernels[tmp]))
+					return (tmp);
+		}
+		return (0);
+	}
+	mngr->res = 1300;
+	return (0);
+}
+
+int		main(int ac, char **av)
 {
 	t_manager	mngr;
 	t_mlx		mlx;
+	int			main_image_num;
 
-	ac = ac + 0;
-	av = av + 0;
-
-	mngr.res = 1200; //TODO get from arguments;
+	main_image_num = parse_args(&mngr, ac, av);
 	init(&mngr);
 	help(&mngr);
-	init_main(&mngr, MNDLBRT);
-	init_r_col(&mngr, MNDLBRT);
+	init_main(&mngr, (char)main_image_num);
+	init_r_col(&mngr, (char)main_image_num);
 	init_l_col(&mngr);
 	mlx = mngr.mlx;
 	mlx_hook(mlx.win_ptr[MAIN_W], 2, 5, hook_keydwn, (void*)&mngr);

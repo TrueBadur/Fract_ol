@@ -68,7 +68,7 @@ typedef struct	s_img
 	int			size_line;
 	int			endian;
 	t_uint2		res;
-	t_uint2		pos;
+	t_int2		pos;
 	int			num;
 
 	cl_mem 		buf;
@@ -110,6 +110,7 @@ typedef enum
 	ALL,
 	KERN,
 	COL,
+	NOCOL,
 	NO,
 }				t_swap_modes;
 
@@ -126,13 +127,14 @@ typedef struct
 	char		info;
 	unsigned	res;
 	t_vector	*saves;
+	int 		sv_off;
 }				t_manager;
 
 extern t_double3 	g_starts[];
 extern t_float3		g_cols[];
 
 void			help(t_manager *mngr);
-void			draw_saves(t_manager *mngr, int init, int d_off);
+void			draw_saves(t_manager *mngr, int d_off);
 int				hook_keyrelease(int key, void *param);
 void			save_redraw(t_manager *mngr, int save);
 int				ft_redraw(void *param, int nimg);
@@ -144,7 +146,7 @@ void			init_main(t_manager *mngr, char kern);
 void			init_r_col(t_manager *mngr, char s_kern);
 void			init_l_col(t_manager *mngr);
 void			init(t_manager *mngr);
-void			init_f_i(t_manager *mngr, int nimg, t_img *img, int win);
+void			init_img(t_manager *mngr, int nimg, t_img *img, int win);
 void 			ft_ocl_make_img(t_img *img, t_ocl *ocl, t_double2 *jc);
 int 			frct_close(void *param);
 int				hook_keydwn(int key, void *param);
@@ -153,4 +155,5 @@ int				mouse_move_handle(int x, int y, void *param);
 int				mouse_release(int but, int x, int y, void *param);
 int				hook_keyrelease(int key, void *param);
 void			draw_empty_save(t_manager *mngr, t_img *img, int i, int new);
+void			write_savefile(t_vector *vec, char del);
 #endif

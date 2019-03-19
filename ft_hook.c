@@ -18,9 +18,10 @@ size_t ft_get_iters(t_double3 start, int iter_mod)
 	size_t  ret;
 	int x;
 
-	x = 1 / start.z;
-	ret = log((x - 250) / 100 + 2) * 200 + iter_mod;
-	ret = ret > 160000 ? 160000 : ret;
+	x = (int)(1 / start.z);
+	ret = (size_t)log((x - 250) / 100.0 + 2) * 200;
+	ret -= ret - iter_mod > 0 ? iter_mod : 0;
+	ret = ret > 16000 ? 16000 : ret;
 	ret = ret < 30 || start.z > 0.01 ? 30 : ret;
 	return (ret);
 }
@@ -113,7 +114,7 @@ int		hook_keydwn(int key, void *param)
 	return (ft_redraw(param, mngr->cur_img));
 }
 
-void	lmb_hold_hndl(t_manager *mngr, x, y)
+void	lmb_hold_hndl(t_manager *mngr, int x, int y)
 {
 	t_double3 *v;
 
@@ -123,7 +124,7 @@ void	lmb_hold_hndl(t_manager *mngr, x, y)
 	mngr->msmvcd[0] = (t_int2){x, y};
 }
 
-void	rmb_hold_hndl(t_manager *mngr, x, y)
+void	rmb_hold_hndl(t_manager *mngr, int x, int y)
 {
 	t_float3	*col;
 
@@ -152,8 +153,8 @@ int mouse_move_handle(int x, int y, void *param)
 	mngr = (t_manager*)param;
 	img = &mngr->imgs[mngr->cur_img];
 	if (mngr->mouse_mask & (1 << 2) &&
-		IN_RNGII(img->pos.x, x, img->pos.x + img->res.x) &&
-		IN_RNGII(img->pos.y, y, img->pos.y + img->res.y))
+		IN_RNGII(img->pos.x, x, img->pos.x + (int)img->res.x) &&
+		IN_RNGII(img->pos.y, y, img->pos.y + (int)img->res.y))
 	{
 		img->opts.jc = img->opts.kern >= JULIA ? (t_double2){img->opts.jc.x +
 		   (x - mngr->msmvcd[2].x) * img->opts.strt.z / 6, img->opts.jc.y +
@@ -173,6 +174,8 @@ int		mouse_release(int but, int x, int y, void *param)
 {
 	t_manager *mngr;
 
+	x += 0;
+	y += 0;
 	mngr = (t_manager*)param;
 	if (but == 3 || but == 2 || but == 1)
 		mngr->mouse_mask &= 0 << but;
@@ -218,16 +221,23 @@ void	scroll(t_img *img, int but, int x, int y)
 
 void	set_img(t_manager *mngr, t_int2 start, int mode, t_img *donor)
 {
+	t_float3 tmp;
+
 	while (start.x <= start.y)
 	{
 		if (mode == ALL)
-		{
 			mngr->imgs[start.x].opts = donor->opts;
-		}
 		else if (mode == KERN)
 			mngr->imgs[start.x].opts.kern = donor->opts.kern;
 		else if (mode == COL)
 			mngr->imgs[start.x].opts.col = donor->opts.col;
+		else if (mode == NOCOL)
+		{
+			tmp = mngr->imgs[start.x].opts.col;
+			mngr->imgs[start.x].opts = donor->opts;
+			mngr->imgs[start.x].opts.col = tmp;
+			mngr->imgs[start.x].opts.strt.z *= SAVE_NUM + COL_PR_NUM;
+		}
 		ft_redraw(mngr, start.x);
 		start.x++;
 	}
@@ -257,7 +267,8 @@ void	save_redraw(t_manager *mngr, int save)
 		draw_empty_save(mngr, img, 0, 0);
 	}
 	if (mngr->mlx.win_ptr[SAVE_W])
-		draw_saves(mngr, 0, 0);
+		draw_saves(mngr, 0);
+	write_savefile(mngr->saves, 0);
 }
 
 
@@ -266,6 +277,7 @@ int		rmb_handle(t_manager *mngr, int x, int y)
 {
 	t_img	*img;
 
+	x += y - y;
 	img = &mngr->imgs[mngr->cur_img];
 	printf("rmb_handle %d\n", mngr->cur_img);
 	if (mngr->cur_img != MAIN_I)
@@ -273,7 +285,7 @@ int		rmb_handle(t_manager *mngr, int x, int y)
 		if (mngr->cur_img < COL_PR)
 		{
 			swap_img(img, &mngr->imgs[MAIN_I], 0);
-			set_img(mngr, (t_int2){COL_PR, SAVE_PR - 1}, KERN, &mngr->imgs[MAIN_I]);
+			set_img(mngr, (t_int2){COL_PR, SAVE_PR - 1}, NOCOL, &mngr->imgs[MAIN_I]);
 		}
 		else if (mngr->cur_img < SAVE_PR)
 			set_img(mngr, (t_int2){MAIN_I, MAIN_I}, COL, img);

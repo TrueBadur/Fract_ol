@@ -12,28 +12,29 @@
 
 #include "fractol.h"
 
-void	draw_saves(t_manager *mngr, int init, int d_off)
+void	draw_saves(t_manager *mngr, int d_off)
 {
 	int			i;
 	unsigned	j;
 	t_img		*simg;
-	static int	offset = 0;
 
 	i = mngr->saves->len / sizeof(t_frctl_o);
-	offset += offset + d_off >= 0 && i - offset - d_off > 12 ? d_off : 0;
-	i -= offset;
+	mngr->sv_off += mngr->sv_off + d_off >= 0 && i - mngr->sv_off - d_off >= 12 ?
+			d_off : 0;
+	mngr->sv_off = i < 16 ? 0 : mngr->sv_off;
+	i -= mngr->sv_off;
 	j = 0;
 	mlx_clear_window(mngr->mlx.mlx_ptr, mngr->mlx.win_ptr[SAVE_W]);
 	while (i-- && j < MAX_SAVEW - 1)
 	{
-		j = mngr->saves->len / sizeof(t_frctl_o) - offset - i - 1;
+		j = mngr->saves->len / sizeof(t_frctl_o) - mngr->sv_off - i - 1;
 		simg = &mngr->imgs[SAVE_PR_IN_W + j];
 		simg->res = (t_uint2){200, 200};
-		simg->pos = (t_uint2){j % 4 * 200, j / 4 * 200};
+		simg->pos = (t_int2){j % 4 * 200, j / 4 * 200};
 		simg->opts = ((t_frctl_o*)mngr->saves->data)[i];
 		simg->opts.strt.z = simg->opts.strt.z / (SAVE_NUM + COL_PR_NUM) * 6;
 		if (!simg->buf)
-			init_f_i(mngr, SAVE_PR_IN_W + j, simg, SAVE_W);
+			init_img(mngr, SAVE_PR_IN_W + j, simg, SAVE_W);
 		ft_redraw(mngr, SAVE_PR_IN_W + j);
 	}
 }
@@ -48,11 +49,12 @@ int hook_keydwn_save (int key, void *param)
 	if (key == 53)
 	{
 		mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr[SAVE_W]);
-		mlx->win_ptr[HELP_W] = NULL;
+		mlx->win_ptr[SAVE_W] = NULL;
 	}
 	if (key == 125 || key == 126)
-		draw_saves(mngr, 0, key == 125 ? 4 : -4);
+		draw_saves(mngr, key == 125 ? 4 : -4);
 	mngr->key_mask |= (SHIFT * SHIFT_D) | (CNTRL * CNTRL_D) | (CMND * CMND_D);
+	return (0);
 }
 
 int save_close(void *param)
@@ -61,7 +63,8 @@ int save_close(void *param)
 
 	mlx = &((t_manager*)param)->mlx;
 	mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr[SAVE_W]);
-	mlx->win_ptr[HELP_W] = NULL;
+	mlx->win_ptr[SAVE_W] = NULL;
+	return (0);
 }
 
 int mouse_hook_save(int key, int x, int y, void *param)
@@ -76,15 +79,16 @@ int mouse_hook_save(int key, int x, int y, void *param)
 	img = &mngr->imgs[imgn];
 	if (key == 2 && IS_CMND_D)
 	{
-		ft_vecremove(mngr->saves, mngr->saves->len - (imgn - SAVE_PR_IN_W + 1) *
-		sizeof(t_frctl_o), sizeof(t_frctl_o));
+		ft_vecremove(mngr->saves, mngr->saves->len - (imgn + mngr->sv_off -
+		SAVE_PR_IN_W + 1) * sizeof(t_frctl_o), sizeof(t_frctl_o));
 		img->opts.kern = -1;
 		save_redraw(mngr, 0);
 		ft_bzero(img->data, img->res.x * img->res.y * 4);
-		draw_saves(mngr, 0, 0);
+		draw_saves(mngr, 0);
 	}
 	else if (key == 2)
 		load_img_pr(mngr, imgn);
+	return (0);
 }
 
 int		load_img_pr(t_manager *mngr, int imgtl)
@@ -115,9 +119,10 @@ void	open_saves(t_manager *mngr)
 {
 	t_mlx		*mlx;
 
+	mngr->sv_off = 0;
 	mlx = &mngr->mlx;
 	mlx->win_ptr[SAVE_W] = mlx_new_window(mlx->mlx_ptr, 800, 800, "Fract_ol: saves");
-	draw_saves(mngr, 1, 0);
+	draw_saves(mngr, 0);
 	mlx_hook(mlx->win_ptr[SAVE_W], 2, 5, hook_keydwn_save, mngr);
 	mlx_hook(mlx->win_ptr[SAVE_W], 17, (1L << 3), save_close, (void*)mngr);
 	mlx_hook(mlx->win_ptr[SAVE_W], 4, 0, mouse_hook_save, mngr);
