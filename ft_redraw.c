@@ -15,11 +15,11 @@
 int		ft_redraw(void *param, int nimg)
 {
 	t_mlx		mlx;
-	t_manager	*mngr;
+	t_mngr		*mngr;
 	t_img		*img;
 	int			win;
 
-	mngr = (t_manager*)param;
+	mngr = (t_mngr*)param;
 	mlx = mngr->mlx;
 	img = &mngr->imgs[nimg];
 	win = nimg >= SAVE_PR_IN_W ? SAVE_W : MAIN_W;
@@ -32,7 +32,7 @@ int		ft_redraw(void *param, int nimg)
 	return (0);
 }
 
-void	save_redraw(t_manager *mngr, int save)
+void	save_redraw(t_mngr *mngr, int save)
 {
 	int		i;
 	int		j;

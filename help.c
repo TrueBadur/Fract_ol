@@ -16,7 +16,7 @@ int		hook_keydwn_help(int key, void *param)
 {
 	t_mlx	*mlx;
 
-	mlx = &((t_manager*)param)->mlx;
+	mlx = &((t_mngr*)param)->mlx;
 	if (key == 53)
 	{
 		mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr[HELP_W]);
@@ -29,7 +29,7 @@ int		help_close(void *param)
 {
 	t_mlx	*mlx;
 
-	mlx = &((t_manager*)param)->mlx;
+	mlx = &((t_mngr*)param)->mlx;
 	mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr[HELP_W]);
 	mlx->win_ptr[HELP_W] = NULL;
 	return (0);
@@ -66,12 +66,14 @@ void	help_put_strings(t_mlx *mlx)
 		"CNTRL + RMB on MAIN image to save current state");
 	wrtoh(mlx, 10, 0x00ee649a, "CMND + RMB on SAVE image to delete it");
 	wrtoh(mlx, 10, 0x00ee649a, "+/- to increase/decrease number of iterations");
+	wrtoh(mlx, 20, 0x00ee649a, "hold CNTRL to increase by 100");
+	wrtoh(mlx, 20, 0x00ee649a, "hold SHIFT to increase by 10");
 	wrtoh(mlx, 10, 0x00ee649a, "r to return to fractal's base position");
-	wrtoh(mlx, 0, 0x00ee649a, "s to open window with all saves");
-	wrtoh(mlx, 0, 0x00ee649a, "h to open this window");
+	wrtoh(mlx, 10, 0x00ee649a, "s to open window with all saves");
+	wrtoh(mlx, 10, 0x00ee649a, "h to open this window");
 }
 
-void	help(t_manager *mngr)
+void	help(t_mngr *mngr)
 {
 	t_mlx	*mlx;
 

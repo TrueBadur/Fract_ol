@@ -12,7 +12,7 @@
 
 #include "fractol.h"
 
-void	draw_saves(t_manager *mngr, int d_off)
+void	draw_saves(t_mngr *mngr, int d_off)
 {
 	int			i;
 	unsigned	j;

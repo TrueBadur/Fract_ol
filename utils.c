@@ -19,13 +19,13 @@ size_t	ft_get_iters(t_double3 start, int iter_mod)
 
 	x = (int)(1 / start.z);
 	ret = (size_t)log((x - 250) / 100.0 + 2) * 200;
-	ret -= ret - iter_mod > 0 ? iter_mod : 0;
+	ret = (int)ret + iter_mod > 0 ? ret + iter_mod : 30;
 	ret = ret > 8000 ? 8000 : ret;
 	ret = ret < 30 || start.z > 0.01 ? 30 : ret;
 	return (ret);
 }
 
-int		get_win(t_manager *mngr, int x, int y)
+int		get_win(t_mngr *mngr, int x, int y)
 {
 	t_int4	i_pos;
 	int		i;
@@ -43,7 +43,7 @@ int		get_win(t_manager *mngr, int x, int y)
 	return (MAIN_I);
 }
 
-void	restart(t_manager *mngr)
+void	restart(t_mngr *mngr)
 {
 	char kern;
 
@@ -70,7 +70,7 @@ void	swap_img(t_img *small, t_img *main, int swp_col)
 											: FRCTL_PRV;
 }
 
-void	set_img(t_manager *mngr, t_int2 start, int mode, t_img *donor)
+void	set_img(t_mngr *mngr, t_int2 start, int mode, t_img *donor)
 {
 	t_float3 tmp;
 

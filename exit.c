@@ -12,7 +12,7 @@
 
 #include "fractol.h"
 
-void	free_ocl(t_manager *mngr)
+void	free_ocl(t_mngr *mngr)
 {
 	int	i;
 
@@ -28,7 +28,7 @@ void	free_ocl(t_manager *mngr)
 	clReleaseDevice(mngr->ocl.device);
 }
 
-void	free_mlx(t_manager *mngr)
+void	free_mlx(t_mngr *mngr)
 {
 	int	i;
 
@@ -44,9 +44,9 @@ void	free_mlx(t_manager *mngr)
 
 void	total_free(void *param)
 {
-	t_manager	*mngr;
+	t_mngr	*mngr;
 
-	mngr = (t_manager*)param;
+	mngr = (t_mngr*)param;
 	write_savefile(mngr->saves, 1);
 	free_ocl(mngr);
 	free(((t_ocl**)param)[0]->kern);

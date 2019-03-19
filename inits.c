@@ -24,7 +24,7 @@ t_float3 g_cols[] = {(t_float3){0.0, 0.0, 0.0},
 					(t_float3){0.21, 2.8, -2.35},
 					(t_float3){-2.0, -0.06, 2.7}};
 
-void	init(t_manager *mngr)
+void	init(t_mngr *mngr)
 {
 	unsigned	res;
 	t_mlx		*mlx;
@@ -49,7 +49,7 @@ void	init(t_manager *mngr)
 	get_saves(mngr, SAVE_FILE);
 }
 
-void	init_img(t_manager *mngr, int nimg, t_img *img, int win)
+void	init_img(t_mngr *mngr, int nimg, t_img *img, int win)
 {
 	cl_int	err;
 	size_t	gs;
@@ -75,7 +75,7 @@ void	init_img(t_manager *mngr, int nimg, t_img *img, int win)
 							img->img_ptr, img->pos.x, img->pos.y);
 }
 
-void	init_r_col(t_manager *mngr, char s_kern)
+void	init_r_col(t_mngr *mngr, char s_kern)
 {
 	unsigned	i;
 	t_uint2		pr_res;
@@ -100,7 +100,7 @@ void	init_r_col(t_manager *mngr, char s_kern)
 	}
 }
 
-void	init_l_col(t_manager *mngr)
+void	init_l_col(t_mngr *mngr)
 {
 	unsigned	i;
 	t_uint2		pr_res;
@@ -129,7 +129,7 @@ void	init_l_col(t_manager *mngr)
 	}
 }
 
-void	init_main(t_manager *mngr, char kern)
+void	init_main(t_mngr *mngr, char kern)
 {
 	mngr->imgs[MAIN_I].opts.iter = 101;
 	mngr->imgs[MAIN_I].opts.kern = kern;

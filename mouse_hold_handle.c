@@ -12,7 +12,7 @@
 
 #include "fractol.h"
 
-void	lmb_hold_hndl(t_manager *mngr, int x, int y)
+void	lmb_hold_hndl(t_mngr *mngr, int x, int y)
 {
 	t_double3 *v;
 
@@ -22,7 +22,7 @@ void	lmb_hold_hndl(t_manager *mngr, int x, int y)
 	mngr->msmvcd[0] = (t_int2){x, y};
 }
 
-void	rmb_hold_hndl(t_manager *mngr, int x, int y)
+void	rmb_hold_hndl(t_mngr *mngr, int x, int y)
 {
 	t_float3	*col;
 

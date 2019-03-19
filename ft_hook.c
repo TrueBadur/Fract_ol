@@ -14,10 +14,10 @@
 
 int		mouse_move_handle(int x, int y, void *param)
 {
-	t_manager	*mngr;
-	t_img		*img;
+	t_mngr	*mngr;
+	t_img	*img;
 
-	mngr = (t_manager*)param;
+	mngr = (t_mngr*)param;
 	img = &mngr->imgs[mngr->cur_img];
 	if (mngr->mouse_mask & (1 << 2) &&
 		IN_RNGII(img->pos.x, x, img->pos.x + (int)img->res.x) &&
@@ -39,11 +39,11 @@ int		mouse_move_handle(int x, int y, void *param)
 
 int		mouse_release(int but, int x, int y, void *param)
 {
-	t_manager	*mngr;
+	t_mngr	*mngr;
 
 	x += 0;
 	y += 0;
-	mngr = (t_manager*)param;
+	mngr = (t_mngr*)param;
 	if (but == 3 || but == 2 || but == 1)
 		mngr->mouse_mask &= 0 << but;
 	return (0);
@@ -68,9 +68,9 @@ void	scroll(t_img *img, int but, int x, int y)
 	}
 }
 
-int		rmb_handle(t_manager *mngr, int x, int y)
+int		rmb_handle(t_mngr *mngr, int x, int y)
 {
-	if (mngr->cur_img != MAIN_I || (x = y + y))
+	if (mngr->cur_img != MAIN_I || (x = y - y))
 	{
 		if (mngr->cur_img < COL_PR)
 		{
@@ -99,10 +99,10 @@ int		rmb_handle(t_manager *mngr, int x, int y)
 
 int		mouse_hook(int but, int x, int y, void *param)
 {
-	t_manager	*mngr;
-	t_img		*img;
+	t_mngr	*mngr;
+	t_img	*img;
 
-	mngr = (t_manager*)param;
+	mngr = (t_mngr*)param;
 	mngr->cur_img = get_win(mngr, x, y);
 	img = &mngr->imgs[mngr->cur_img];
 	if (y > 0 && (but == 3 || but == 2 || but == 1))
@@ -115,6 +115,7 @@ int		mouse_hook(int but, int x, int y, void *param)
 	if (but == 4 || but == 5)
 	{
 		scroll(img, but, x, y);
+		ft_redraw(param, mngr->cur_img);
 	}
-	return (ft_redraw(param, mngr->cur_img));
+	return (0);
 }

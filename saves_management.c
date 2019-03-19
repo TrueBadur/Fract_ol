@@ -14,11 +14,11 @@
 
 int		hook_keydwn_save(int key, void *param)
 {
-	t_mlx		*mlx;
-	t_manager	*mngr;
+	t_mlx	*mlx;
+	t_mngr	*mngr;
 
-	mlx = &((t_manager *)param)->mlx;
-	mngr = (t_manager*)param;
+	mlx = &((t_mngr *)param)->mlx;
+	mngr = (t_mngr*)param;
 	if (key == 53)
 	{
 		mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr[SAVE_W]);
@@ -34,7 +34,7 @@ int		save_close(void *param)
 {
 	t_mlx	*mlx;
 
-	mlx = &((t_manager*)param)->mlx;
+	mlx = &((t_mngr*)param)->mlx;
 	mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr[SAVE_W]);
 	mlx->win_ptr[SAVE_W] = NULL;
 	return (0);
@@ -42,11 +42,11 @@ int		save_close(void *param)
 
 int		mouse_hook_save(int key, int x, int y, void *param)
 {
-	int			imgn;
-	t_manager	*mngr;
-	t_img		*img;
+	int		imgn;
+	t_mngr	*mngr;
+	t_img	*img;
 
-	mngr = (t_manager*)param;
+	mngr = (t_mngr*)param;
 	if ((imgn = y / 200 * 4 + x / 200 + SAVE_PR_IN_W) < 0 || imgn > END_I ||
 	imgn >= mngr->img_num)
 		return (0);
@@ -65,7 +65,7 @@ int		mouse_hook_save(int key, int x, int y, void *param)
 	return (0);
 }
 
-int		load_img_pr(t_manager *mngr, int imgtl)
+int		load_img_pr(t_mngr *mngr, int imgtl)
 {
 	t_img	*load;
 	int		i;
@@ -90,7 +90,7 @@ int		load_img_pr(t_manager *mngr, int imgtl)
 	return (0);
 }
 
-void	open_saves(t_manager *mngr)
+void	open_saves(t_mngr *mngr)
 {
 	t_mlx		*mlx;
 

@@ -34,7 +34,7 @@ void	write_savefile(t_vector *vec, char del)
 	fclose(fd);
 }
 
-void	get_saves(t_manager *mngr, const char *fname)
+void	get_saves(t_mngr *mngr, const char *fname)
 {
 	FILE		*fd;
 	int			i;
@@ -62,7 +62,7 @@ void	get_saves(t_manager *mngr, const char *fname)
 		mngr->saves = ft_vecinit(4 * sizeof(t_frctl_o));
 }
 
-void	draw_empty_save(t_manager *mngr, t_img *img, int i, int new)
+void	draw_empty_save(t_mngr *mngr, t_img *img, int i, int new)
 {
 	t_mlx *mlx;
 
@@ -76,7 +76,7 @@ void	draw_empty_save(t_manager *mngr, t_img *img, int i, int new)
 		img->pos.x + 30, img->pos.y + img->res.y / 2, 0x00aaaaaa, "Save slot");
 }
 
-void	init_save(t_manager *mngr, int i)
+void	init_save(t_mngr *mngr, int i)
 {
 	t_img		*img;
 	t_vector	*v;

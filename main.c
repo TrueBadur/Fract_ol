@@ -61,7 +61,7 @@ void	base_help(void)
 	exit(0);
 }
 
-int		parse_args(t_manager *mngr, int ac, char **av)
+int		parse_args(t_mngr *mngr, int ac, char **av)
 {
 	int tmp;
 	int i;
@@ -90,9 +90,9 @@ int		parse_args(t_manager *mngr, int ac, char **av)
 
 int		main(int ac, char **av)
 {
-	t_manager	mngr;
-	t_mlx		mlx;
-	int			main_image_num;
+	t_mngr	mngr;
+	t_mlx	mlx;
+	int		main_image_num;
 
 	main_image_num = parse_args(&mngr, ac, av);
 	init(&mngr);
