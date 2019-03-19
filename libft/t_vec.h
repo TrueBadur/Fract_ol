@@ -22,14 +22,14 @@ typedef struct		s_vector2
 
 typedef struct
 {
-	unsigned	x;
-	unsigned	y;
+	unsigned		x;
+	unsigned		y;
 }					t_uint2;
 
 typedef struct
 {
-	double		x;
-	double		y;
+	double			x;
+	double			y;
 }					t_double2;
 
 typedef struct		s_vector3
@@ -41,9 +41,9 @@ typedef struct		s_vector3
 
 typedef struct
 {
-	unsigned	x;
-	unsigned	y;
-	unsigned	z;
+	unsigned		x;
+	unsigned		y;
+	unsigned		z;
 }					t_uint3;
 
 typedef struct		s_vector3_f
@@ -55,9 +55,9 @@ typedef struct		s_vector3_f
 
 typedef struct
 {
-	double		x;
-	double		y;
-	double		z;
+	double			x;
+	double			y;
+	double			z;
 }					t_double3;
 
 typedef struct		s_vector4
@@ -70,8 +70,8 @@ typedef struct		s_vector4
 
 typedef union
 {
-	long	l;
-	double	d;
+	long			l;
+	double			d;
 }					t_dtol;
 
 typedef struct		s_vector4_f
@@ -81,7 +81,6 @@ typedef struct		s_vector4_f
 	float		u;
 	float		v;
 }					t_float4;
-
 
 typedef struct		s_vector
 {

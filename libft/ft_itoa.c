@@ -41,7 +41,7 @@ char	*ft_itoa(long n)
 	return (ret);
 }
 
-int ft_itoa_buf(long n, char *res)
+int		ft_itoa_buf(long n, char *res)
 {
 	long	nb;
 	int		len;

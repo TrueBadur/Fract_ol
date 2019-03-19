@@ -12,6 +12,7 @@
 
 NAME = libft.a
 OCL_NAME = libocl.a
+LIB_PATH = -I ./
 SRC = $(wildcard ft*.c) get_next_line.c
 OBJ = $(SRC:.c=.o)
 OCL_SRC = $(wildcard ft_ocl/*.c)
@@ -20,7 +21,7 @@ CC = clang
 #CFLAGS = -Wall -Wextra -Werror
 
 .c.a:
-	@$(CC) $(CFLAGS) -c $< -o $*.o
+	@$(CC) $(CFLAGS) -c $< -o $*.o $(LIB_PATH)
 	@ar r $@ $*.o
 	@rm $*.o
 
