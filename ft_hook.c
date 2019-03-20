@@ -91,6 +91,7 @@ int		rmb_handle(t_mngr *mngr, int x, int y)
 		else if (load_img_pr(mngr, mngr->cur_img))
 			return (1);
 		ft_redraw(mngr, MAIN_I);
+		ft_redraw(mngr, mngr->cur_img);
 	}
 	else if (mngr->cur_img == MAIN_I && IS_CNTRL_D)
 		save_redraw(mngr, 1);

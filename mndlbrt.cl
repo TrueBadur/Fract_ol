@@ -194,7 +194,7 @@ __kernel void julia(__global int *img, const ulong2 it_len, const double3 start,
 	value.y = -start.y - value.y * start.z;
 	prev.xy = value.xy;
 	i = 0;
-	for (; i < it_len.x && xs + ys < 4; i++)
+	for (; i < it_len.x && xs + ys < 256; i++)
 	{
 		xs = prev.x * prev.x;
 		ys = prev.y * prev.y;
@@ -236,7 +236,7 @@ __kernel void julia_fabsfabs(__global int *img, const ulong2 it_len, const doubl
 	value.y = -start.y - value.y * start.z;
 	prev.xy = value.xy;
 	i = 0;
-	for (; i < it_len.x && xs + ys < 4; i++)
+	for (; i < it_len.x && xs + ys < 256; i++)
 	{
 		xs = prev.x * prev.x;
 		ys = prev.y * prev.y;
@@ -278,7 +278,7 @@ __kernel void julia_tantan(__global int *img, const ulong2 it_len, const double3
 	value.y = -start.y - value.y * start.z;
 	prev.xy = value.xy;
 	i = 0;
-	for (; i < it_len.x && xs + ys < 4; i++)
+	for (; i < it_len.x && xs + ys < 256; i++)
 	{
 		xs = prev.x * prev.x;
 		ys = prev.y * prev.y;
@@ -320,7 +320,7 @@ __kernel void julia_fabstan(__global int *img, const ulong2 it_len, const double
 	value.y = -start.y - value.y * start.z;
 	prev.xy = value.xy;
 	i = 0;
-	for (; i < it_len.x && xs + ys < 4; i++)
+	for (; i < it_len.x && xs + ys < 256; i++)
 	{
 		xs = prev.x * prev.x;
 		ys = prev.y * prev.y;
