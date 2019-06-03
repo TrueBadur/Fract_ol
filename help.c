@@ -80,7 +80,7 @@ void	help(t_mngr *mngr)
 	mlx = &mngr->mlx;
 	if (mlx->win_ptr[HELP_W])
 		return ;
-	mlx->win_ptr[HELP_W] = mlx_new_window(mlx->mlx_ptr, 700, 1200,
+	mlx->win_ptr[HELP_W] = mlx_new_window(mlx->mlx_ptr, 700, 500,
 										"Fract_ol: Help");
 	help_put_strings(mlx);
 	if (!(mngr->imgs[MAIN_I].img_ptr))
