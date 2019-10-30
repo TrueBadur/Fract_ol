@@ -22,6 +22,9 @@
 
 ```./fractol [resolution of main image] [name of fractal for main image]```
 
+Note: Приложение протетировано на macos с дискретной видеокартой.
+Known issue: На данный момент невозможно запустить приложение на ноутбуках, в связи с тем, что на мобильных видеокартах не поддерживается вычисление с double.
+
 
 ![Instructions](/scrn/scrn01_instructions.png)
 
